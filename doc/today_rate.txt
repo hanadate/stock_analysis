@@ -1,0 +1,35 @@
+"4406"
+"actual_date" "2024-08-16"
+"XLK" "0.32"
+"XLF" "0.03"
+"XLI" "0.18"
+"XLB" "0.03"
+"XLY" "0.17"
+"XLE" "0.04"
+"XLV" "0.04"
+"XLU" "0.08"
+"XLP" "0.03"
+"TLT" "0.07"
+
+>.2 is valid.
+---景気強/金利低---
+技術 XLK x3= TECL
+金融 XLF x3= FAS
+---景気強/金利高---
+資本 XLI
+素材 XLB
+消費 XLY
+---景気弱/金利高---
+エネ XLE x2= ERX
+---景気弱/金利低---
+医療 XLV x3= CURE
+公共 XLU
+必需 XLP
+長債 TLT x3= TMF
+
+START: 2024-08-17 07:30:24
+END: 2024-08-17 10:00:38
+MIN DATE: 2006-03-01
+MIN DATE: 2006-04-28
+MAX DATE: 2024-08-16
+DATA STATUS: OK
