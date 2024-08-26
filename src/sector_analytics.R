@@ -7,7 +7,7 @@ library(lubridate)
 library(caret)
 library(doParallel)
 library(xgboost)
-
+library(fredr)
 
 # Set your path
 workdir <- "G:/My Drive/stock_analysis"
@@ -220,6 +220,8 @@ iau_value <- adjusted_prices$IAU %>%
 xhb_iau_ratio <- xhb_value %>% 
   dplyr::inner_join(., iau_value, by="actual_date") %>%
   dplyr::mutate(xhb_iau_ratio = XHB.Close / IAU.Close)
+
+# economic data from FRED
 
 
 # 特徴量と教師データをJOIN
