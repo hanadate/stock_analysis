@@ -1,3 +1,8 @@
+# large data
+*.csv
+*.rds
+# API
+fred_api.txt
 # History files
 .Rhistory
 .Rapp.history
