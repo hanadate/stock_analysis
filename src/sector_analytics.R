@@ -1,30 +1,59 @@
 #===== Note
+# This script provides a prediction the most profitable sector for any days. 
 # 9 BASIC SECTORS from Super Sectors (Nyaradi, 2010) is:
 # XLK, XLI, XLY, XLB, XLE, XLP, XLV, XLU, XLF
 # Take advantage of Interpolation, not Extrapolation.
-# THERE'S ALWAYS A BULL MARKET SOMEWHERE.
+# Jim Cramer frequently said THERE'S ALWAYS A BULL MARKET SOMEWHERE.
 # Short is risker than long. https://www.investopedia.com/terms/s/shortselling.asp
 #===== Libraries
 library(tidyverse)
 library(lubridate)
-# library(rlist)
-# library(forecast)
-# library(riingo)
 library(quantmod)
 library(PerformanceAnalytics)
 library(fredr)
-# library(slurmR)
 library(caret)
 library(xgboost)
 library(doParallel)
+library(pROC)
 
 #===== Setting
 # Set your path
 starttime <- now()
 workdir <- "G:/My Drive/stock_analysis"
+result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
+pred_days <- c(5,10,15)
+sectors <- c(
+  # 9 Basic Sectors 
+  "XLK", "XLF", "XLE",
+  "XLB", "XLI", "XLY",
+  "XLV", "XLP", "XLU"
+)
+# TRAIN Params
+# Note:
+# https://topepo.github.io/caret/model-training-and-tuning.html
+# For too manu features, colsample_bytree works. 
+# Not use PCA as feature compression by PCA is based on normal distribution.
+# Set nrounds as many as possible.  
+# tolerance takes the simplest model that is within a percent tolerance of the empirically optimal mode
+# Under CV, best model could have small generalization error.  
+trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
+                          number = 5, # Try in short time with setting 1.(10)
+                          repeats = 2, # Try in short time with setting 1.(2)
+                          classProbs = TRUE,
+                          summaryFunction = mnLogLoss,
+                          search = "random",
+                          verboseIter=TRUE,
+                          selectionFunction="best")
+tuneGrid <- expand.grid(nrounds = 100,
+                        max_depth = c(4,6,8),
+                        eta = .05,
+                        gamma = 0,
+                        colsample_bytree = c(.1,.4,.7),
+                        min_child_weight = 1,
+                        subsample = 1)
 
 #===== Get prices
 prices_ohlc <- new.env()
@@ -53,9 +82,7 @@ getSymbols(c(
   "^XDB", "^XDE", "000001.SS", "^N225", "^XDN", "^XDA",
   # 
   # 9 Basic Sectors
-  "XLK", "XLF", "XLE",
-  "XLB", "XLI", "XLY",
-  "XLV", "XLP", "XLU"),
+  sectors),
   env = prices_ohlc,
   src = "yahoo", from = fromdate, to = today(), warnings = FALSE)
 saveRDS(prices_ohlc, file="doc/sectors_prices.rds")
@@ -235,18 +262,20 @@ treasuries <- irx_rate %>%
     tnx_tyx = TNX.Close / TYX.Close
   )
 
+#=== Inverse S&P500
+inv_sp500 <- setNames(-dailyReturn(adjusted_prices$GSPC),"inv")
+
+
 #===== Iteration for each prediction range
 # Y: The most profitable sector is calculated by comparing with sum of daily return in rs.par days
 # In other words, the objective of this problem is prediction for the most outpeformed sector in next rs.par days. 
-return_prices <- lapply(adjusted_prices[c("XLK", "XLF", "XLE",
-                                          "XLB", "XLI", "XLY",
-                                          "XLV", "XLP", "XLU")], function(x){
+return_prices <- lapply(adjusted_prices[c(sectors)], function(x){
                                             setNames(
                                               dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
                                             )
-                                          })
-
-today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
+                                          }) %>% 
+  rlist::list.append(., inv_sp500)
+today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   print(paste0("Start ",i," days forecast at ",lubridate::now()))
   rs.par <- i
   return_rs_prices <- lapply(return_prices, function(x){
@@ -259,10 +288,8 @@ today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
   
   winner <- mergeddf %>% 
     # Select focal Sectors
-    dplyr::select(starts_with(c("XLK", "XLF", "XLE",
-                                "XLB", "XLI", "XLY",
-                                "XLV", "XLP", "XLU"))
-    ) %>% 
+    # dplyr::select(starts_with(c(sectors))
+    # ) %>% 
     dplyr::mutate(date=row.names(.)) %>%
     tidyr::pivot_longer(-date) %>% 
     dplyr::filter(!is.na(value)) %>% 
@@ -275,7 +302,7 @@ today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
     tidyr::pivot_wider(names_from=name, values_from=value) %>% 
     dplyr::select(date, max_idx) %>% 
     dplyr::mutate(actual_date=lubridate::ymd(date))
-  # Number and ratio of win for each sector in rs.par days.
+  # Number and ratio of win for each sector for rs.par days.
   table(winner$max_idx)
   round(table(winner$max_idx)/nrow(winner)*100,1)
   
@@ -313,8 +340,11 @@ today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
     dplyr::mutate(nth_wday_month=as.factor(paste0(week_of_month,"th_",day_of_week,"_of_",month_of_year)),
                   year=as.factor(year),
                   month_of_year=as.factor(month_of_year),
-                  day_of_week=as.factor(day_of_week)) %>% 
-    dplyr::select(-week_of_month) %>% 
+                  week_of_month=as.factor(week_of_month),
+                  day_of_week=as.factor(day_of_week)) %>%
+    # Delete non-circular features
+    dplyr::select(-year) %>%
+    # dplyr::select(-week_of_month) %>% 
     # Delete Saturday & Sunday.
     # Sort by actual_date
     dplyr::arrange(actual_date)
@@ -323,6 +353,11 @@ today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
   # check train data 
   # winner_x %>% dim
   write_csv(winner_x, file=paste0("doc/winner_x_", i,".csv"))
+  # when read csv, apply factor type for calendar features.
+  # winner_x <- read_csv(paste0("doc/winner_x_", i,".csv")) %>%
+  #   dplyr::mutate_at(c("month_of_year", "day_of_week",
+  #                      "nth_wday_month", "month_of_year",
+  #                      "day_of_week","week_of_month"),as.factor)
   
   #===== ML
   # class weight for imbalancing multi class
@@ -332,30 +367,11 @@ today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
     dplyr::left_join(winner_x,. , by=join_by(max_idx==Var1)) %>% 
     dplyr::pull(wts)
   
-  # Params
-  # Note:
-  # Not much different from 3 and 9 in number of CV (Nti et al, 2021).
-  # For too manu features, colsample_bytree works. 
-  # Not use PCA as feature compression by PCA is based on normal distribution.
-  # Set nrounds as many as possible.  
-  trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
-                            number = 10, # Try in short time with setting 1. (10)
-                            repeats = 2, # Try in short time with setting 1. (2)
-                            classProbs = TRUE,
-                            summaryFunction = mnLogLoss,
-                            search = "random",
-                            verboseIter=TRUE)
-  tuneGrid <- expand.grid(nrounds = c(100,1000),
-                          max_depth = 6,
-                          eta = .3,
-                          gamma = 0,
-                          colsample_bytree = c(.1,.4,.7),
-                          min_child_weight = 1,
-                          subsample = 1)
   # Train
   print(paste0("Start train at ", now()))
   cl <- makePSOCKcluster(detectCores())
   registerDoParallel(cl)
+  set.seed(1111)
   modelFit <- train(max_idx ~ . -actual_date, data = winner_x,
                     weights = class_weight,
                     method = "xgbTree", metric="logLoss", 
@@ -366,32 +382,39 @@ today_rate_combined <- foreach(i=c(5,10), .combine="rbind") %do% {
   print(paste0("TRAINING FINISHED at ", now()))
   #=== End of training.
   modelFit <- readRDS(paste0("doc/modelFit_", i,".rds"))
+  
+  # importance 
   importance_matrix <- xgb.importance(modelFit$finalModel$feature_names, model = modelFit$finalModel) %>% 
     dplyr::mutate_if(.predicate = is.numeric, .funs = ~ round(.,3))
-  write.table(importance_matrix, paste0("doc/importance_matrix_", i,".txt"))
-  
+  write.csv(importance_matrix, paste0("doc/importance_matrix_", i,".csv"))
+
   # predict the most profitable sector as probability.
-  today_x <- winner_x
-  actual_date_c <- pull(today_x, actual_date)
-  pred_prob <- today_x %>% 
+  actual_date_c <- pull(winner_x, actual_date)
+  pred_prob <- winner_x %>% 
     predict(modelFit, ., type="prob") %>% 
     round(2) %>% 
     dplyr::mutate(actual_date=actual_date_c) %>% 
-    dplyr::select("actual_date","XLK","XLF","XLI","XLB","XLY","XLE","XLV","XLU","XLP")
+    dplyr::select(c("actual_date", sectors, "inv"))
   write.csv(pred_prob, file=paste0("doc/pred_prob_dump_", i,".csv"))
+  # roc auc
+  res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
+  saveRDS(res_roc, file=paste0("doc/res_roc_",i,".rds"))
+  # make return obj.
   today_rate <- tail(pred_prob,1) %>% 
     dplyr::mutate(actual_date=as.integer(i)) %>%
     dplyr::rename(predict_date=actual_date)
   write.table(today_rate, paste0("doc/today_rate_dump", i,".txt"))
   return(today_rate)
 }
+saveRDS(today_rate_combined,"doc/today_rate_combined.rds")
 endtime <- now()
 
 #=====Result summary
 today_rate_combined %>% 
+  dplyr::rename(DAT=predict_date) %>% 
   format(., nsmall=2) %>% 
   t(.) %>% 
-  write.table(., "doc/today_rate.txt")
+  write.table(., result_file)
 write_lines("
 Tech XLK x3= TECL
 Fin  XLF x3= FAS
@@ -403,20 +426,28 @@ Heal XLV x3= CURE
 Util XLU
 Stap XLP
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
-", file="doc/today_rate.txt", append=TRUE)
-write_lines(paste0("START: ",round(starttime)), file="doc/today_rate.txt", append=TRUE)
-write_lines(paste0("END: ",round(endtime)), file="doc/today_rate.txt", append=TRUE)
-write_lines(paste0("MIN DATE: ",min(winner_x$actual_date)), file="doc/today_rate.txt", append=TRUE)
-write_lines(paste0("MAX DATE: ",max(winner_x$actual_date)), file="doc/today_rate.txt", append=TRUE)
-write_lines(paste0("DIM: ",nrow(winner_x), "x",ncol(winner_x)), file="doc/today_rate.txt", append=TRUE)
-write_lines("===trainControl===", file="doc/today_rate.txt", append=TRUE)
-write_lines(trControl, file="doc/today_rate.txt", append=TRUE)
-write_lines("===tuneGrid===", file="doc/today_rate.txt", append=TRUE)
-write_lines(tuneGrid, file="doc/today_rate.txt", append=TRUE)
+", file=result_file, append=TRUE)
+write_lines(paste0("START: ",round(starttime)), file=result_file, append=TRUE)
+write_lines(paste0("END: ",round(endtime)), file=result_file, append=TRUE)
+write_lines(paste0("MIN DATE: ",min(winner_x$actual_date)), file=result_file, append=TRUE)
+write_lines(paste0("MAX DATE: ",max(winner_x$actual_date)), file=result_file, append=TRUE)
+write_lines(paste0("DIM: ",nrow(winner_x), "x",ncol(winner_x)), file=result_file, append=TRUE)
+for(i in pred_days){
+  write_lines(paste0("===",i," days==="), file=result_file, append = TRUE)
+  res_roc <- readRDS(paste0("doc/res_roc_",i,".rds"))
+  write_lines(paste0("AUC: ", res_roc$auc), file=result_file, append=TRUE)
+  train_summary <- readRDS(paste0("doc/modelFit_",i,".rds"))
+  write_lines(paste0(names(train_summary$results)," : ",round(train_summary$results,2)), file=result_file, append=TRUE)
+  write_lines(paste0(names(train_summary$bestTune)," : ",train_summary$bestTune), file=result_file, append=TRUE)
+}
+write_lines("===trainControl===", file=result_file, append=TRUE)
+write_lines(paste0(names(trControl)," : " , trControl), file=result_file, append=TRUE)
+write_lines("===tuneGrid===", file=result_file, append=TRUE)
+write_lines(paste0(names(tuneGrid)," : " , tuneGrid), file=result_file, append=TRUE)
 print("PREDICT FINISHED.")
 
-
-# #=====Backtest
+#=====Backtest
+#=======
 # print("Start Backtest")
 # print(now())
 # # Check exist predictions

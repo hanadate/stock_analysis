@@ -1,0 +1,2 @@
+"predict_date" "XLK" "XLF" "XLI" "XLB" "XLY" "XLE" "XLV" "XLU" "XLP"
+"4515" 10 0.08 0.06 0.02 0.08 0.39 0.15 0.06 0.12 0.04
