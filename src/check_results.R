@@ -18,7 +18,7 @@ sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
   "XLB", "XLI", "XLY",
-  "XLV", "XLP", "XLU"
+  "XLV", "XLP", "XLU", "TLT"
 )
 #===== read rds and csv for replication
 # list of files under doc folder
@@ -72,11 +72,29 @@ invest_rate <- today_rate %>%
   # map predicted probability to ticker
   dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
   dplyr::mutate(actual_date=today_rate$actual_date) %>%
+  # full invest to most profitable ticker.
   # if inv has highest prob, set position 0.
-  dplyr::mutate(across(all_of(sectors), ~if_else(PRED=="inv", 0, .)))
+  tidyr::pivot_longer(cols=all_of(c(sectors,"inv")),
+                      names_to="ticker") %>% 
+  dplyr::mutate(value=if_else(PRED==ticker,1,0)) %>% 
+  dplyr::filter(ticker!="inv") %>% 
+  tidyr::pivot_wider(names_from=ticker, values_from=value) %>% 
+  dplyr::select(-PRED)
 invest_rate %>% glimpse
 invest_rate %>% tail
 invest_rate %>% summary
+non_position <- today_rate %>% 
+  dplyr::select(-actual_date) %>% 
+  # map predicted probability to ticker
+  dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
+  dplyr::mutate(actual_date=today_rate$actual_date) %>%
+  # full invest to most profitable ticker.
+  # if inv has highest prob, set position 0.
+  tidyr::pivot_longer(cols=all_of(c(sectors,"inv")),
+                      names_to="ticker") %>% 
+  dplyr::filter((PRED==ticker)&(PRED=="inv")) %>% 
+  dplyr::pull(actual_date)
+  
 
 # ETF価格
 adjusted_prices_df <- as.data.frame(do.call(cbind, adjusted_prices)) %>%
@@ -98,7 +116,7 @@ invest_rate_prices_list <- foreach(i=1:length(ticker_c), .combine="rbind") %do% 
 leverage_invest_rate_prices_list <- invest_rate_prices_list %>%
   dplyr::mutate(invest_rate=case_when(
     ticker %in% c("XLE") ~ invest_rate*2,
-    ticker %in% c("XLF","XLK","XLV") ~ invest_rate*3,
+    ticker %in% c("XLF","XLK","XLV","TLT") ~ invest_rate*3,
     .default = invest_rate
   ))
 # 本戦略のリターン

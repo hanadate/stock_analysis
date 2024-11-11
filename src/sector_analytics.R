@@ -30,7 +30,7 @@ sectors <- c(
   # 9 Basic Sectors 
   "XLK", "XLF", "XLE",
   "XLB", "XLI", "XLY",
-  "XLV", "XLP", "XLU"
+  "XLV", "XLP", "XLU", "TLT"
 )
 # TRAIN Params
 # Note:
@@ -426,6 +426,7 @@ Ene  XLE x2= ERX
 Heal XLV x3= CURE
 Util XLU
 Stap XLP
+Trea TLT
 -SP5 inv
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
 ", file=result_file, append=TRUE)
