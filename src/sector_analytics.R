@@ -264,7 +264,7 @@ treasuries <- irx_rate %>%
   )
 
 #=== Inverse S&P500
-inv_sp500 <- setNames(-dailyReturn(adjusted_prices$GSPC),"inv")
+inv_sp500 <- setNames(-dailyReturn(adjusted_prices$GSPC),"inv_return")
 
 
 #===== Iteration for each prediction range

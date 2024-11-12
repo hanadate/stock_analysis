@@ -42,6 +42,7 @@ modelFit$results %>%
   dplyr::select(max_depth, colsample_bytree, logLoss) %>% 
   tidyr::pivot_wider(names_from=max_depth, values_from=logLoss)
 
+
 # ROC
 res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
 res_roc$auc
@@ -52,6 +53,8 @@ winner_x_pred <- winner_x %>%
                 accuracy=(max_idx==pred)) %>% 
   dplyr::select(actual_date,max_idx,pred,accuracy)
 summary(winner_x_pred)
+
+#===== cor SPX and TLT
 
 #===== for debugging
 # find duplicated date
