@@ -13,7 +13,8 @@ library(pROC)
 
 #===== settings
 pred_days <- c(5,10,15)
-i <- pred_days[2]
+# select prediction date length
+pd <- pred_days[2] 
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
@@ -24,12 +25,12 @@ sectors <- c(
 # list of files under doc folder
 list.files("doc")
 # read ground truth and independent variables
-winner_x <- read_csv(paste0("doc/winner_x_", i,".csv")) %>%
+winner_x <- read_csv(paste0("doc/winner_x_", pd,".csv")) %>%
   dplyr::mutate_at(c("month_of_year", "day_of_week",
                      "nth_wday_month", "month_of_year",
                      "day_of_week","week_of_month"),as.factor)
 # trained model
-modelFit <- readRDS(paste0("doc/modelFit_", i,".rds"))
+modelFit <- readRDS(paste0("doc/modelFit_", pd,".rds"))
 # prices
 prices_ohlc <- readRDS("doc/sectors_prices.rds")
 adjusted_prices <- lapply(prices_ohlc, function(x){(Cl(adjustOHLC(x,use.Adjusted=TRUE)))})
@@ -43,11 +44,15 @@ modelFit$results %>%
   tidyr::pivot_wider(names_from=max_depth, values_from=logLoss)
 
 
-# ROC
+#===== ROC
 res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
 res_roc$auc
 
-# add pred col to winner_x
+#===== read pred_prob_dump_
+pred_prob <- read_csv(paste0("doc/pred_prob_dump_", pd,".csv"), col_select = -1)
+glimpse(tail(pred_prob,1))
+
+#===== add pred col to winner_x
 winner_x_pred <- winner_x %>% 
   dplyr::mutate(pred=res_roc$response,
                 accuracy=(max_idx==pred)) %>% 
@@ -65,16 +70,13 @@ length(winner_x$actual_date)==
 # Note: This backtest is rough and optimistic. 
 #       Move window for date of train data every oneday to perform legit backtest.
 #===
-# Check exist predictions
-predictions <- paste0("doc/",dir("doc")[str_starts(dir("doc"),"pred_prob_dump")])
-
 # セクターごとのOutperform確率
-today_rate <- read_csv(predictions[2], col_select=-1)
-invest_rate <- today_rate %>%
+
+invest_rate <- pred_prob %>%
   dplyr::select(-actual_date) %>% 
   # map predicted probability to ticker
   dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
-  dplyr::mutate(actual_date=today_rate$actual_date) %>%
+  dplyr::mutate(actual_date=pred_prob$actual_date) %>%
   # full invest to most profitable ticker.
   # if inv has highest prob, set position 0.
   tidyr::pivot_longer(cols=all_of(c(sectors,"inv")),
@@ -86,11 +88,11 @@ invest_rate <- today_rate %>%
 invest_rate %>% glimpse
 invest_rate %>% tail
 invest_rate %>% summary
-non_position <- today_rate %>% 
+non_position <- pred_prob %>% 
   dplyr::select(-actual_date) %>% 
   # map predicted probability to ticker
   dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
-  dplyr::mutate(actual_date=today_rate$actual_date) %>%
+  dplyr::mutate(actual_date=pred_prob$actual_date) %>%
   # full invest to most profitable ticker.
   # if inv has highest prob, set position 0.
   tidyr::pivot_longer(cols=all_of(c(sectors,"inv")),
@@ -131,7 +133,7 @@ leverage_invest_rate_prices_list <- invest_rate_prices_list %>%
 # ヘルス CURE = XLV x3
 leverage_on_c <- c(FALSE, TRUE)
 comp_ticker_c <- c("SPY", "SPXL")
-comp_duration_c <- c(20,200,1000,2000)
+comp_duration_c <- c(100,200,1000,2000)
 
 for(i in seq(length(leverage_on_c))) {for(j in seq(length(comp_duration_c))) {
   leverage_on <- leverage_on_c[i]
@@ -166,7 +168,7 @@ for(i in seq(length(leverage_on_c))) {for(j in seq(length(comp_duration_c))) {
     dailyReturn(., type="arithmetic") %>%
     setNames(., comp_ticker)
   mystrategy_spy <- merge.xts(performance_daily_return, SPY_dailyreturn)
-  png(filename=paste0("doc/vs",comp_ticker,"_",comp_duration,"_lev_",leverage_on,".png"),width = 480, height = 480)
+  png(filename=paste0("doc/vs",comp_ticker,"_",comp_duration,"_lev_",leverage_on,"_pd_",pd,".png"),width = 480, height = 480)
   # for loop内ではprintしないといけない
   print(chart.CumReturns(tail(mystrategy_spy,comp_duration), legend.loc = "bottomright", wealth.index = TRUE))
   dev.off()
