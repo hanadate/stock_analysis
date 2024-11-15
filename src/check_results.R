@@ -12,7 +12,7 @@ library(doParallel)
 library(pROC)
 
 #===== settings
-pred_days <- c(10,15,20)
+pred_days <- c(1,10,20)
 # select prediction date length
 pd <- pred_days[1]
 sectors <- c(
