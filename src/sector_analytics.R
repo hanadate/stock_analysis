@@ -399,7 +399,7 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
     predict(modelFit, ., type="prob") %>% 
     round(2) %>% 
     dplyr::mutate(actual_date=actual_date_c) %>% 
-    dplyr::select(c("actual_date", sectors, "inv"))
+    dplyr::select(c("actual_date", sectors))
   write.csv(pred_prob, file=paste0("doc/pred_prob_dump_", i,".csv"))
   # roc auc
   res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
