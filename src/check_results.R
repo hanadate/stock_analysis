@@ -29,9 +29,19 @@ winner_x <- read_csv(paste0("doc/winner_x_", pd,".csv")) %>%
   dplyr::mutate_at(c("month_of_year", "day_of_week",
                      "nth_wday_month", "month_of_year",
                      "day_of_week","week_of_month"),as.factor)
+# number of winning by each sector.
+table(winner_x$max_idx)
+
+# date inv won
+winner_x %>% 
+  dplyr::filter(max_idx=="inv") %>% 
+  dplyr::pull(actual_date) %>% 
+  tail(100)
+
 # trained model
 modelFit <- readRDS(paste0("doc/modelFit_", pd,".rds"))
 # prices
+modelFit$
 prices_ohlc <- readRDS("doc/sectors_prices.rds")
 adjusted_prices <- lapply(prices_ohlc, function(x){(Cl(adjustOHLC(x,use.Adjusted=TRUE)))})
 

@@ -263,19 +263,23 @@ treasuries <- irx_rate %>%
     tnx_tyx = TNX.Close / TYX.Close
   )
 
-#=== Inverse S&P500
-inv_sp500 <- setNames(-dailyReturn(adjusted_prices$GSPC),"inv_return")
-
+#=== Inverse sum of sectors
+inv_sectors <- lapply(adjusted_prices[c(sectors)], function(x){
+  setNames(
+    -dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
+  )
+}) %>% Reduce("+",.)/length(sectors) %>% 
+  setNames(., "inv_return")
 
 #===== Iteration for each prediction range
 # Y: The most profitable sector is calculated by comparing with sum of daily return in rs.par days
 # In other words, the objective of this problem is prediction for the most outpeformed sector in next rs.par days. 
 return_prices <- lapply(adjusted_prices[c(sectors)], function(x){
-                                            setNames(
-                                              dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
-                                            )
-                                          }) %>% 
-  rlist::list.append(., inv_sp500)
+  setNames(
+    dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
+  )
+}) %>% 
+  rlist::list.append(., inv_sectors)
 today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   print(paste0("Start ",i," days forecast at ",lubridate::now()))
   rs.par <- i
@@ -388,7 +392,7 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   importance_matrix <- xgb.importance(modelFit$finalModel$feature_names, model = modelFit$finalModel) %>% 
     dplyr::mutate_if(.predicate = is.numeric, .funs = ~ round(.,3))
   write.csv(importance_matrix, paste0("doc/importance_matrix_", i,".csv"))
-
+  
   # predict the most profitable sector as probability.
   actual_date_c <- pull(winner_x, actual_date)
   pred_prob <- winner_x %>% 

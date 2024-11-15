@@ -1,16 +1,16 @@
-"4517" "45171" "45172"
-"DAT" "10" "15" "20"
-"XLK" "0.10" "0.12" "0.07"
-"XLF" "0.05" "0.07" "0.04"
-"XLE" "0.07" "0.05" "0.11"
-"XLB" "0.05" "0.02" "0.03"
-"XLI" "0.01" "0.03" "0.03"
-"XLY" "0.29" "0.30" "0.15"
-"XLV" "0.06" "0.04" "0.07"
-"XLP" "0.02" "0.02" "0.02"
-"XLU" "0.13" "0.13" "0.31"
-"TLT" "0.08" "0.06" "0.07"
-"inv" "0.15" "0.15" "0.09"
+"4519" "45191"
+"PD" "10" "20"
+"XLK" "0.05" "0.06"
+"XLF" "0.04" "0.04"
+"XLE" "0.10" "0.09"
+"XLB" "0.03" "0.05"
+"XLI" "0.02" "0.07"
+"XLY" "0.26" "0.24"
+"XLV" "0.04" "0.05"
+"XLP" "0.01" "0.03"
+"XLU" "0.09" "0.09"
+"TLT" "0.05" "0.06"
+"inv" "0.31" "0.21"
 
 Tech XLK x3= TECL
 Fin  XLF x3= FAS
@@ -25,13 +25,13 @@ Trea TLT
 -SP5 inv
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
 
-START: 2024-11-13 16:13:52
-END: 2024-11-13 16:47:00
+START: 2024-11-15 06:05:04
+END: 2024-11-15 13:51:23
 MIN DATE: 2006-12-01
-MAX DATE: 2024-11-12
-DIM: 4517x4579
+MAX DATE: 2024-11-14
+DIM: 4519x4579
 ===10 days===
-AUC: 0.994862996335397
+AUC: 0.999997243593364
 eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
 max_depth : c(4, 4, 6, 6, 8, 8)
 gamma : c(0, 0, 0, 0, 0, 0)
@@ -39,35 +39,17 @@ colsample_bytree : c(0.4, 0.7, 0.4, 0.7, 0.4, 0.7)
 min_child_weight : c(1, 1, 1, 1, 1, 1)
 subsample : c(1, 1, 1, 1, 1, 1)
 nrounds : c(100, 100, 100, 100, 100, 100)
-logLoss : c(2.4, 2.4, 2.4, 2.4, 2.4, 2.4)
-logLossSD : c(NA, NA, NA, NA, NA, NA)
+logLoss : c(1.53, 1.52, 1.29, 1.29, 1.21, 1.21)
+logLossSD : c(0.02, 0.02, 0.02, 0.02, 0.02, 0.02)
 nrounds : 100
-max_depth : 4
-eta : 0.05
-gamma : 0
-colsample_bytree : 0.4
-min_child_weight : 1
-subsample : 1
-===15 days===
-AUC: 0.996267844965089
-eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
-max_depth : c(4, 4, 6, 6, 8, 8)
-gamma : c(0, 0, 0, 0, 0, 0)
-colsample_bytree : c(0.4, 0.7, 0.4, 0.7, 0.4, 0.7)
-min_child_weight : c(1, 1, 1, 1, 1, 1)
-subsample : c(1, 1, 1, 1, 1, 1)
-nrounds : c(100, 100, 100, 100, 100, 100)
-logLoss : c(2.4, 2.4, 2.4, 2.4, 2.4, 2.4)
-logLossSD : c(NA, NA, NA, NA, NA, NA)
-nrounds : 100
-max_depth : 4
+max_depth : 8
 eta : 0.05
 gamma : 0
 colsample_bytree : 0.4
 min_child_weight : 1
 subsample : 1
 ===20 days===
-AUC: 0.997239498963271
+AUC: 0.99999863931487
 eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
 max_depth : c(4, 4, 6, 6, 8, 8)
 gamma : c(0, 0, 0, 0, 0, 0)
@@ -75,10 +57,10 @@ colsample_bytree : c(0.4, 0.7, 0.4, 0.7, 0.4, 0.7)
 min_child_weight : c(1, 1, 1, 1, 1, 1)
 subsample : c(1, 1, 1, 1, 1, 1)
 nrounds : c(100, 100, 100, 100, 100, 100)
-logLoss : c(2.4, 2.4, 2.4, 2.4, 2.4, 2.4)
-logLossSD : c(NA, NA, NA, NA, NA, NA)
+logLoss : c(1.17, 1.17, 0.97, 0.97, 0.91, 0.92)
+logLossSD : c(0.01, 0.01, 0.01, 0.01, 0.01, 0.01)
 nrounds : 100
-max_depth : 4
+max_depth : 8
 eta : 0.05
 gamma : 0
 colsample_bytree : 0.4
@@ -86,8 +68,8 @@ min_child_weight : 1
 subsample : 1
 ===trainControl===
 method : repeatedcv
-number : 1
-repeats : 1
+number : 3
+repeats : 2
 search : random
 p : 0.75
 initialWindow : NULL

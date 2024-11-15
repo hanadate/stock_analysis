@@ -1,4 +1,4 @@
-[1] "2024-11-14 START."
+[1] "2024-11-15 START."
  [1] "GC=F"            "SI=F"            "PL=F"            "HG=F"           
  [5] "PA=F"            "CL=F"            "HO=F"            "NG=F"           
  [9] "RB=F"            "ZC=F"            "ZO=F"            "KE=F"           
@@ -21,15 +21,19 @@
 [77] "XLF"             "XLE"             "XLB"             "XLI"            
 [81] "XLY"             "XLV"             "XLP"             "XLU"            
 [1] "Comparing all prices..."
-[1] "Proc time is 3.68715533415476"
+[1] "Proc time is 3.7503279487292"
 [1] "Comparing all RSIs..."
-[1] "Proc time is 2.89176281293233"
-[1] "Start 10 days forecast at 2024-11-14 06:13:10.513048"
-[1] "Start train at 2024-11-14 06:13:27.299231"
+[1] "Proc time is 2.99134906927745"
+[1] "Start 10 days forecast at 2024-11-15 06:12:37.005073"
+[1] "Start train at 2024-11-15 06:12:53.770028"
 Aggregating results
 Selecting tuning parameters
 Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2024-11-14 11:55:23.731498"
-[1] "Start 15 days forecast at 2024-11-14 11:55:32.071222"
-[1] "Start train at 2024-11-14 11:55:48.617825"
-[1] "Start 20 days forecast at 2024-11-14 16:28:16.419411"
+[1] "TRAINING FINISHED at 2024-11-15 10:07:47.304181"
+[1] "Start 20 days forecast at 2024-11-15 10:07:55.675002"
+[1] "Start train at 2024-11-15 10:08:12.27004"
+Aggregating results
+Selecting tuning parameters
+Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
+[1] "TRAINING FINISHED at 2024-11-15 13:51:14.782007"
+[1] "PREDICT FINISHED."
