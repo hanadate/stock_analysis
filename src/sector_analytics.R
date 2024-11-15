@@ -25,7 +25,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(10,20)
+pred_days <- c(1,10,20)
 sectors <- c(
   # 9 Basic Sectors 
   "XLK", "XLF", "XLE",
@@ -41,8 +41,8 @@ sectors <- c(
 # tolerance takes the simplest model that is within a percent tolerance of the empirically optimal mode
 # Under CV, best model could have small generalization error.  
 trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
-                          number = 3, # Try in short time with setting 1.(10)
-                          repeats = 2, # Try in short time with setting 1.(2)
+                          number = 3, # Try in short time with setting 1.
+                          repeats = 2, # Try in short time with setting 1.
                           classProbs = TRUE,
                           summaryFunction = mnLogLoss,
                           search = "random",
