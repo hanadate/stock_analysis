@@ -268,8 +268,8 @@ inv_sectors <- lapply(adjusted_prices[c(sectors)], function(x){
   setNames(
     -dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
   )
-}) %>% Reduce("+",.)/length(sectors) %>% 
-  setNames(., "inv_return")
+}) %>% Reduce("+",.)/length(sectors)
+names(inv_sectors) <- "inv_return"
 
 #===== Iteration for each prediction range
 # Y: The most profitable sector is calculated by comparing with sum of daily return in rs.par days
@@ -399,7 +399,7 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
     predict(modelFit, ., type="prob") %>% 
     round(2) %>% 
     dplyr::mutate(actual_date=actual_date_c) %>% 
-    dplyr::select(c("actual_date", sectors))
+    dplyr::select(c("actual_date", sectors,"inv"))
   write.csv(pred_prob, file=paste0("doc/pred_prob_dump_", i,".csv"))
   # roc auc
   res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
@@ -431,7 +431,7 @@ Heal XLV x3= CURE
 Util XLU
 Stap XLP
 Trea TLT
--SP5 inv
+-Avg inv
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
 ", file=result_file, append=TRUE)
 write_lines(paste0("START: ",round(starttime)), file=result_file, append=TRUE)

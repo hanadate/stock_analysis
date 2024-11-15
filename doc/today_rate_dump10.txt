@@ -1,2 +1,2 @@
-"predict_date" "XLK" "XLF" "XLE" "XLB" "XLI" "XLY" "XLV" "XLP" "XLU" "TLT" "inv"
-"4519" 10 0.05 0.04 0.1 0.03 0.02 0.26 0.04 0.01 0.09 0.05 0.31
+"predict_date" "XLK" "XLF" "XLE" "XLB" "XLI" "XLY" "XLV" "XLP" "XLU" "TLT"
+"4519" 10 0.09 0.04 0.08 0.04 0.01 0.34 0.04 0.02 0.16 0.06
