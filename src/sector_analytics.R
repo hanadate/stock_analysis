@@ -266,7 +266,7 @@ treasuries <- irx_rate %>%
 #=== Inverse sum of sectors
 inv_sectors <- lapply(adjusted_prices[c(sectors)], function(x){
   setNames(
-    -dailyReturn(x,type="log"), str_replace(paste0(colnames(x), "_return"), ".Close","")
+    -dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
   )
 }) %>% Reduce("+",.)/length(sectors)
 names(inv_sectors) <- "inv_return"
@@ -276,7 +276,7 @@ names(inv_sectors) <- "inv_return"
 # In other words, the objective of this problem is prediction for the most outpeformed sector in next rs.par days. 
 return_prices <- lapply(adjusted_prices[c(sectors)], function(x){
   setNames(
-    dailyReturn(x,type="log"), str_replace(paste0(colnames(x), "_return"), ".Close","")
+    dailyReturn(x,type="arithmetic"), str_replace(paste0(colnames(x), "_return"), ".Close","")
   )
 }) %>% 
   rlist::list.append(., inv_sectors)
