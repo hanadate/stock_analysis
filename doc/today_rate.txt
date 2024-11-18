@@ -1,0 +1,134 @@
+"4520" "45201" "45202"
+"PD" " 5" "10" "15"
+"XLK" "0.12" "0.12" "0.12"
+"XLF" "0.09" "0.04" "0.08"
+"XLE" "0.16" "0.10" "0.07"
+"XLB" "0.10" "0.03" "0.02"
+"XLI" "0.03" "0.01" "0.02"
+"XLY" "0.11" "0.33" "0.22"
+"XLV" "0.04" "0.03" "0.04"
+"XLP" "0.02" "0.03" "0.04"
+"XLU" "0.13" "0.10" "0.15"
+"TLT" "0.04" "0.08" "0.14"
+"inv" "0.15" "0.11" "0.09"
+
+Tech XLK x3= TECL
+Fin  XLF x3= FAS
+Ind  XLI
+Bas  XLB
+Cons XLY
+Ene  XLE x2= ERX
+Heal XLV x3= CURE
+Util XLU
+Stap XLP
+Trea TLT
+-Avg inv
+# Note: Sell fast Leveraged ETFs. It must decay in a long term.
+
+START: 2024-11-18 15:39:16
+END: 2024-11-18 16:04:55
+MIN DATE: 2006-12-01
+MAX DATE: 2024-11-15
+DIM: 4520x4579
+===5 days===
+AUC: 0.989776101446446
+eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
+max_depth : c(4, 4, 6, 6, 8, 8)
+gamma : c(0, 0, 0, 0, 0, 0)
+colsample_bytree : c(0.4, 0.7, 0.4, 0.7, 0.4, 0.7)
+min_child_weight : c(1, 1, 1, 1, 1, 1)
+subsample : c(1, 1, 1, 1, 1, 1)
+nrounds : c(100, 100, 100, 100, 100, 100)
+logLoss : c(2.4, 2.4, 2.4, 2.4, 2.4, 2.4)
+logLossSD : c(NA, NA, NA, NA, NA, NA)
+nrounds : 100
+max_depth : 4
+eta : 0.05
+gamma : 0
+colsample_bytree : 0.4
+min_child_weight : 1
+subsample : 1
+===10 days===
+AUC: 0.994625976814249
+eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
+max_depth : c(4, 4, 6, 6, 8, 8)
+gamma : c(0, 0, 0, 0, 0, 0)
+colsample_bytree : c(0.4, 0.7, 0.4, 0.7, 0.4, 0.7)
+min_child_weight : c(1, 1, 1, 1, 1, 1)
+subsample : c(1, 1, 1, 1, 1, 1)
+nrounds : c(100, 100, 100, 100, 100, 100)
+logLoss : c(2.4, 2.4, 2.4, 2.4, 2.4, 2.4)
+logLossSD : c(NA, NA, NA, NA, NA, NA)
+nrounds : 100
+max_depth : 4
+eta : 0.05
+gamma : 0
+colsample_bytree : 0.4
+min_child_weight : 1
+subsample : 1
+===15 days===
+AUC: 0.996342750813523
+eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
+max_depth : c(4, 4, 6, 6, 8, 8)
+gamma : c(0, 0, 0, 0, 0, 0)
+colsample_bytree : c(0.4, 0.7, 0.4, 0.7, 0.4, 0.7)
+min_child_weight : c(1, 1, 1, 1, 1, 1)
+subsample : c(1, 1, 1, 1, 1, 1)
+nrounds : c(100, 100, 100, 100, 100, 100)
+logLoss : c(2.4, 2.4, 2.4, 2.4, 2.4, 2.4)
+logLossSD : c(NA, NA, NA, NA, NA, NA)
+nrounds : 100
+max_depth : 4
+eta : 0.05
+gamma : 0
+colsample_bytree : 0.4
+min_child_weight : 1
+subsample : 1
+===trainControl===
+method : repeatedcv
+number : 1
+repeats : 1
+search : random
+p : 0.75
+initialWindow : NULL
+horizon : 1
+fixedWindow : TRUE
+skip : 0
+verboseIter : TRUE
+returnData : TRUE
+returnResamp : final
+savePredictions : FALSE
+classProbs : TRUE
+summaryFunction : function (data, lev = NULL, model = NULL) 
+{
+    if (is.null(lev)) 
+        stop("'lev' cannot be NULL")
+    if (!all(lev %in% colnames(data))) 
+        stop("'data' should have columns consistent with 'lev'")
+    if (!all(sort(lev) %in% sort(levels(data$obs)))) 
+        stop("'data$obs' should have levels consistent with 'lev'")
+    dataComplete <- data[complete.cases(data), ]
+    probs <- as.matrix(dataComplete[, lev, drop = FALSE])
+    logLoss <- ModelMetrics::mlogLoss(dataComplete$obs, probs)
+    c(logLoss = logLoss)
+}
+selectionFunction : best
+preProcOptions : list(thresh = 0.95, ICAcomp = 3, k = 5, freqCut = 19, uniqueCut = 10, cutoff = 0.9)
+sampling : NULL
+index : NULL
+indexOut : NULL
+indexFinal : NULL
+timingSamps : 0
+predictionBounds : c(FALSE, FALSE)
+seeds : NA
+adaptive : list(min = 5, alpha = 0.05, method = "gls", complete = TRUE)
+trim : FALSE
+allowParallel : TRUE
+===tuneGrid===
+nrounds : c(100, 100, 100, 100, 100, 100)
+max_depth : c(4, 6, 8, 4, 6, 8)
+eta : c(0.05, 0.05, 0.05, 0.05, 0.05, 0.05)
+gamma : c(0, 0, 0, 0, 0, 0)
+colsample_bytree : c(0.4, 0.4, 0.4, 0.7, 0.7, 0.7)
+min_child_weight : c(1, 1, 1, 1, 1, 1)
+subsample : c(1, 1, 1, 1, 1, 1)

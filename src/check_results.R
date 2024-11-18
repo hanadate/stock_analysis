@@ -14,7 +14,7 @@ library(pROC)
 #===== settings
 pred_days <- c(5,10,15)
 # select prediction date length
-pd <- pred_days[1]
+pd <- pred_days[3]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
@@ -32,7 +32,7 @@ winner_x <- read_csv(paste0("doc/winner_x_", pd,".csv")) %>%
 # number of winning by each sector.
 table(winner_x$max_idx)
 
-# date inv won
+# date inverse of average of all sectors won 
 winner_x %>% 
   dplyr::filter(max_idx=="inv") %>% 
   dplyr::pull(actual_date) %>% 
@@ -143,7 +143,7 @@ leverage_invest_rate_prices_list <- invest_rate_prices_list %>%
 # ヘルス CURE = XLV x3
 leverage_on_c <- c(FALSE, TRUE)
 comp_ticker_c <- c("SPY", "SPXL")
-comp_duration_c <- c(100,200,1000,2000)
+comp_duration_c <- c(1000,2000)
 
 for(i in seq(length(leverage_on_c))) {for(j in seq(length(comp_duration_c))) {
   leverage_on <- leverage_on_c[i]
