@@ -5,7 +5,7 @@
 # Take advantage of Interpolation, not Extrapolation.
 # Jim Cramer frequently said THERE'S ALWAYS A BULL MARKET SOMEWHERE.
 # Short is risker than long. https://www.investopedia.com/terms/s/shortselling.asp
-# Add inverse return of GSPC into target classes to catch a DON'T LONG signal.
+# Add zero return into target classes to catch a DON'T LONG signal.
 #===== Libraries
 library(tidyverse)
 library(lubridate)
@@ -47,7 +47,7 @@ trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for lar
                           summaryFunction = mnLogLoss,
                           search = "random",
                           verboseIter=TRUE,
-                          selectionFunction="best")
+                          selectionFunction="tolerance")
 tuneGrid <- expand.grid(nrounds = 100,
                         max_depth = c(4,6,8),
                         eta = .05,
@@ -263,13 +263,13 @@ treasuries <- irx_rate %>%
     tnx_tyx = TNX.Close / TYX.Close
   )
 
-#=== Inverse sum of sectors
-inv_sectors <- lapply(adjusted_prices[c(sectors)], function(x){
+#=== Zero (Originally, this is inverse of average for all sectors)
+zero_sectors <- lapply(adjusted_prices[c(sectors)], function(x){
   setNames(
     -dailyReturn(x,type="log"), str_replace(paste0(colnames(x), "_return"), ".Close","")
   )
-}) %>% Reduce("+",.)/length(sectors)
-names(inv_sectors) <- "inv_return"
+}) %>% Reduce("+",.)/length(sectors) *0
+names(zero_sectors) <- "zero_return"
 
 #===== Iteration for each prediction range
 # Y: The most profitable sector is calculated by comparing with sum of daily return in rs.par days
@@ -279,7 +279,7 @@ return_prices <- lapply(adjusted_prices[c(sectors)], function(x){
     dailyReturn(x,type="log"), str_replace(paste0(colnames(x), "_return"), ".Close","")
   )
 }) %>% 
-  rlist::list.append(., inv_sectors)
+  rlist::list.append(., zero_sectors)
 today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   print(paste0("Start ",i," days forecast at ",lubridate::now()))
   rs.par <- i
@@ -399,7 +399,7 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
     predict(modelFit, ., type="prob") %>% 
     round(2) %>% 
     dplyr::mutate(actual_date=actual_date_c) %>% 
-    dplyr::select(c("actual_date", sectors,"inv"))
+    dplyr::select(c("actual_date", sectors,"zero"))
   write.csv(pred_prob, file=paste0("doc/pred_prob_dump_", i,".csv"))
   # roc auc
   res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
@@ -431,7 +431,7 @@ Heal XLV x3= CURE
 Util XLU
 Stap XLP
 Trea TLT
--Avg inv
+Zero zero
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
 ", file=result_file, append=TRUE)
 write_lines(paste0("START: ",round(starttime)), file=result_file, append=TRUE)
