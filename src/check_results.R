@@ -14,7 +14,7 @@ library(pROC)
 #===== settings
 pred_days <- c(5,10,15)
 # select prediction date length
-pd <- pred_days[3]
+pd <- pred_days[1]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
@@ -34,14 +34,13 @@ table(winner_x$max_idx)
 
 # date inverse of average of all sectors won 
 winner_x %>% 
-  dplyr::filter(max_idx=="inv") %>% 
+  dplyr::filter(max_idx=="zero") %>% 
   dplyr::pull(actual_date) %>% 
   tail(100)
 
 # trained model
 modelFit <- readRDS(paste0("doc/modelFit_", pd,".rds"))
 # prices
-modelFit$
 prices_ohlc <- readRDS("doc/sectors_prices.rds")
 adjusted_prices <- lapply(prices_ohlc, function(x){(Cl(adjustOHLC(x,use.Adjusted=TRUE)))})
 
@@ -88,11 +87,11 @@ invest_rate <- pred_prob %>%
   dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
   dplyr::mutate(actual_date=pred_prob$actual_date) %>%
   # full invest to most profitable ticker.
-  # if inv has highest prob, set position 0.
-  tidyr::pivot_longer(cols=all_of(c(sectors,"inv")),
+  # if zero has highest prob, set position 0.
+  tidyr::pivot_longer(cols=all_of(c(sectors,"zero")),
                       names_to="ticker") %>% 
   dplyr::mutate(value=if_else(PRED==ticker,1,0)) %>% 
-  dplyr::filter(ticker!="inv") %>% 
+  dplyr::filter(ticker!="zero") %>% 
   tidyr::pivot_wider(names_from=ticker, values_from=value) %>% 
   dplyr::select(-PRED)
 invest_rate %>% glimpse
@@ -104,10 +103,10 @@ non_position <- pred_prob %>%
   dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
   dplyr::mutate(actual_date=pred_prob$actual_date) %>%
   # full invest to most profitable ticker.
-  # if inv has highest prob, set position 0.
-  tidyr::pivot_longer(cols=all_of(c(sectors,"inv")),
+  # if zero has highest prob, set position 0.
+  tidyr::pivot_longer(cols=all_of(c(sectors,"zero")),
                       names_to="ticker") %>% 
-  dplyr::filter((PRED==ticker)&(PRED=="inv")) %>% 
+  dplyr::filter((PRED==ticker)&(PRED=="zero")) %>% 
   dplyr::pull(actual_date)
   
 
