@@ -25,7 +25,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(5,10,15)
+pred_days <- c(1,3,5)
 sectors <- c(
   # 9 Basic Sectors 
   "XLK", "XLF", "XLE",
