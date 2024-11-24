@@ -14,7 +14,7 @@ library(pROC)
 #===== settings
 pred_days <- c(1,3,5)
 # select prediction date length
-pd <- pred_days[2]
+pd <- pred_days[3]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
