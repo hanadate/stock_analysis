@@ -14,7 +14,7 @@ library(pROC)
 #===== settings
 pred_days <- c(1,3,5)
 # select prediction date length
-pd <- pred_days[3]
+pd <- pred_days[2]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
@@ -57,6 +57,10 @@ modelFit$results %>%
 res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
 res_roc$auc
 
+#===== Accuracy
+cm <- caret::confusionMatrix(data=predict(modelFit,winner_x,type="raw"), reference=as.factor(winner_x$max_idx))
+cm
+
 #===== read pred_prob_dump_
 pred_prob <- read_csv(paste0("doc/pred_prob_dump_", pd,".csv"), col_select = -1)
 glimpse(tail(pred_prob,1))
@@ -68,7 +72,10 @@ winner_x_pred <- winner_x %>%
   dplyr::select(actual_date,max_idx,pred,accuracy)
 summary(winner_x_pred)
 
-#===== cor SPX and TLT
+#===== is max_idx the most profitable?
+winner_x %>% 
+  dplyr::select(actual_date, max_idx) %>% 
+  tail(10)
 
 #===== for debugging
 # find duplicated date

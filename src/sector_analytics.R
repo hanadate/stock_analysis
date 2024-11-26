@@ -404,6 +404,9 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   # roc auc
   res_roc <- pROC::multiclass.roc(winner_x$max_idx, predict(modelFit,winner_x,type="prob"))
   saveRDS(res_roc, file=paste0("doc/res_roc_",i,".rds"))
+  # confusion matrix
+  cm <- caret::confusionMatrix(data=predict(modelFit,winner_x,type="raw"), reference=as.factor(winner_x$max_idx))
+  saveRDS(cm, file=paste0("doc/cm_",i,".rds"))
   # make return obj.
   today_rate <- tail(pred_prob,1) %>% 
     dplyr::mutate(actual_date=as.integer(i)) %>%
@@ -443,6 +446,8 @@ for(i in pred_days){
   write_lines(paste0("===",i," days==="), file=result_file, append = TRUE)
   res_roc <- readRDS(paste0("doc/res_roc_",i,".rds"))
   write_lines(paste0("AUC: ", res_roc$auc), file=result_file, append=TRUE)
+  cm <- readRDS(paste0("doc/cm_",i,".rds"))
+  write_lines(paste0("Accuracy: ", cm$overall["Accuracy"]), file=result_file, append=TRUE)
   train_summary <- readRDS(paste0("doc/modelFit_",i,".rds"))
   write_lines(paste0(names(train_summary$results)," : ",round(train_summary$results,2)), file=result_file, append=TRUE)
   write_lines(paste0(names(train_summary$bestTune)," : ",train_summary$bestTune), file=result_file, append=TRUE)
