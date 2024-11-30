@@ -418,10 +418,15 @@ saveRDS(today_rate_combined,"doc/today_rate_combined.rds")
 endtime <- now()
 
 #=====Result summary
+today_rate_combined <- readRDS("doc/today_rate_combined.rds")
+rownames(today_rate_combined) <- NULL
 today_rate_combined %>% 
-  dplyr::rename(PD=predict_date) %>% 
-  format(., nsmall=2) %>% 
+  dplyr::rename(PreD=predict_date,
+                `XLK*`=XLK,`XLF*`=XLF,`XLE*`=XLE,`XLV*`=XLV,`TLT*`=TLT,
+                `XLI-`=XLI,`XLB-`=XLB,`XLY-`=`XLY`,`XLU-`=XLU,`XLP-`=XLP) %>% 
+  format(., nsmall=2) %>%
   t(.) %>% 
+  data.frame() %>% 
   write.table(., result_file)
 write_lines("
 Tech XLK x3= TECL
@@ -433,7 +438,7 @@ Ene  XLE x2= ERX
 Heal XLV x3= CURE
 Util XLU
 Stap XLP
-Trea TLT
+Trea TLT x3= RMF
 Zero zero
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
 ", file=result_file, append=TRUE)
