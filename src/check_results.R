@@ -88,6 +88,18 @@ length(winner_x$actual_date)==
 #===
 # セクターごとのOutperform確率
 
+?Return.portfolio
+chart.StackedBar(weights)
+x <- Return.portfolio(edhec["2000::",1:11], weights=weights,verbose=TRUE)
+chart.CumReturns(x$returns)
+
+drs <- foreach(i=c(sectors)) %do% { 
+  dr <- dailyReturn(adjustOHLC(prices_ohlc[[i]], use.Adjusted=TRUE))
+  names(dr) <- i
+  return(dr)
+}
+drs.xts <- do.call(merge, c(drs, all=TRUE))
+
 invest_rate <- pred_prob %>%
   dplyr::select(-actual_date) %>% 
   # map predicted probability to ticker
@@ -104,7 +116,7 @@ invest_rate <- pred_prob %>%
 invest_rate %>% glimpse
 invest_rate %>% tail
 invest_rate %>% summary
-non_position <- pred_prob %>% 
+non_position_date <- pred_prob %>% 
   dplyr::select(-actual_date) %>% 
   # map predicted probability to ticker
   dplyr::mutate(PRED = names(.)[max.col(.)]) %>% 
@@ -115,79 +127,14 @@ non_position <- pred_prob %>%
                       names_to="ticker") %>% 
   dplyr::filter((PRED==ticker)&(PRED=="zero")) %>% 
   dplyr::pull(actual_date)
-  
 
-# ETF価格
-adjusted_prices_df <- as.data.frame(do.call(cbind, adjusted_prices)) %>%
-  dplyr::mutate(actual_date=lubridate::ymd(row.names(.)))
-# ETF価格とOutperform確率
-invest_rate_prices <- invest_rate %>%
-  dplyr::inner_join(., adjusted_prices_df, by="actual_date")
-# ETF価格と投資配分をactual_dateでjoin
-# セクターごとのdata.frameにして，ひとつのListにまとめる
-ticker_c <- sectors
-invest_rate_prices_list <- foreach(i=1:length(ticker_c), .combine="rbind") %do% {
-  target_ticker <- ticker_c[i]
-  target_invest_rate_prices <- invest_rate_prices %>%
-    dplyr::select(actual_date, starts_with(target_ticker)) %>%
-    dplyr::rename(invest_rate := !!target_ticker,
-                  price := !!paste0(target_ticker, ".Close")) %>%
-    dplyr::mutate(ticker=target_ticker)
-}
-leverage_invest_rate_prices_list <- invest_rate_prices_list %>%
-  dplyr::mutate(invest_rate=case_when(
-    ticker %in% c("XLE") ~ invest_rate*2,
-    ticker %in% c("XLF","XLK","XLV","TLT") ~ invest_rate*3,
-    .default = invest_rate
-  ))
-# 本戦略のリターン
-# レバレッジの場合は、
-# エネ ERX = XLE x2
-# 金融 FAS = XLF x3
-# 技術 TECL = XLK x3
-# 長期債 TMF = TLT x3
-# ヘルス CURE = XLV x3
-leverage_on_c <- c(FALSE, TRUE)
-comp_ticker_c <- c("SPY", "SPXL")
-comp_duration_c <- c(1000,2000)
+invest_rate.xts <- xts(select(invest_rate, -actual_date), order.by=invest_rate$actual_date)
+drs.xts
+invest_rate.xts
 
-for(i in seq(length(leverage_on_c))) {for(j in seq(length(comp_duration_c))) {
-  leverage_on <- leverage_on_c[i]
-  comp_ticker <- comp_ticker_c[i]
-  comp_duration <- comp_duration_c[j]
-  print(paste0("lev:",leverage_on,", comp:",comp_ticker, " dur:",comp_duration))
-
-  performance_daily_return <- foreach(k=seq(length(ticker_c)), .combine = "+") %do% {
-    target_ticker <- ticker_c[k]
-    target_df <- if(leverage_on==TRUE){leverage_invest_rate_prices_list}else{invest_rate_prices_list}
-    target_invest_rate_prices <- target_df %>%
-      dplyr::filter(ticker %in% target_ticker) %>%
-      dplyr::select(actual_date, price) %>%
-      as.xts %>%
-      dailyReturn(., type="arithmetic")
-    target_rate <- target_df %>%
-      dplyr::filter(ticker %in% target_ticker) %>%
-      dplyr::select(actual_date, invest_rate) %>%
-      as.xts
-    target_daily_return <- target_invest_rate_prices*target_rate
-  } %>%
-    setNames(., paste0("mystrategy","_lev_",leverage_on))
-  # PerformanceAnalytics::charts.PerformanceSummary(performance_daily_return)
-
-  comp_value_list <- new.env()
-  getSymbols(comp_ticker, from = "2006-03-01", to = today(),
-             env = comp_value_list,  src = "yahoo", warnings = FALSE)
-  comp_value <- as.list(comp_value_list)[[1]]
-
-  SPY_dailyreturn <- comp_value %>%
-    adjustOHLC(., use.Adjusted = TRUE) %>%
-    dailyReturn(., type="arithmetic") %>%
-    setNames(., comp_ticker)
-  mystrategy_spy <- merge.xts(performance_daily_return, SPY_dailyreturn)
-  png(filename=paste0("doc/vs",comp_ticker,"_",comp_duration,"_lev_",leverage_on,"_pd_",pd,".png"),width = 480, height = 480)
-  # for loop内ではprintしないといけない
-  print(chart.CumReturns(tail(mystrategy_spy,comp_duration), legend.loc = "bottomright", wealth.index = TRUE))
-  dev.off()
-}}
-#========
-
+png(filename=paste0("doc/return_portfolio_1year_",pd,".png"), width=480,height=300)
+pdlen <- 200
+return_mystrategy <- Return.portfolio(R=tail(drs.xts, pdlen), weights=invest_rate.xts, wealth.index=FALSE, contribution=TRUE, 
+                 rebalance_on="days")
+chart.CumReturns(return_mystrategy$portfolio.returns)
+dev.off()
