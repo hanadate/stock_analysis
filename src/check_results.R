@@ -66,11 +66,14 @@ pred_prob <- read_csv(paste0("doc/pred_prob_dump_", pd,".csv"), col_select = -1)
 glimpse(tail(pred_prob,1))
 
 #===== add pred col to winner_x
+#===== check fail date
 winner_x_pred <- winner_x %>% 
-  dplyr::mutate(pred=res_roc$response,
+  dplyr::mutate(pred=predict(modelFit,winner_x,type="raw"),
                 accuracy=(max_idx==pred)) %>% 
   dplyr::select(actual_date,max_idx,pred,accuracy)
 summary(winner_x_pred)
+winner_x_pred %>% 
+  dplyr::filter(accuracy==FALSE)
 
 #===== is max_idx the most profitable?
 winner_x %>% 
@@ -87,11 +90,6 @@ length(winner_x$actual_date)==
 #       Move window for date of train data every oneday to perform legit backtest.
 #===
 # セクターごとのOutperform確率
-
-?Return.portfolio
-chart.StackedBar(weights)
-x <- Return.portfolio(edhec["2000::",1:11], weights=weights,verbose=TRUE)
-chart.CumReturns(x$returns)
 
 drs <- foreach(i=c(sectors)) %do% { 
   dr <- dailyReturn(adjustOHLC(prices_ohlc[[i]], use.Adjusted=TRUE))
