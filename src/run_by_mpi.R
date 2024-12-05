@@ -17,6 +17,7 @@ library(pROC)
 #===== Setting
 # Set your path
 starttime <- now()
+cut_date <- 0
 workdir <- "G:/My Drive/stock_analysis"
 result_file <- "doc/today_rate.txt"
 setwd(workdir)

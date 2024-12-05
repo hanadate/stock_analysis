@@ -357,6 +357,9 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   # Thus, pass the parameter na.action=na.omit
   # check train data 
   # winner_x %>% dim
+  # For backtest, trim the last days
+  winner_x <- winner_x %>% 
+    dplyr::slice(., 1:nrow(winner_x)-cut_date)
   write_csv(winner_x, file=paste0("doc/winner_x_", i,".csv"))
   # when read csv, apply factor type for calendar features.
   # winner_x <- read_csv(paste0("doc/winner_x_", i,".csv")) %>%
