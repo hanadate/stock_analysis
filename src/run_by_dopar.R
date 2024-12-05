@@ -1,6 +1,5 @@
 #===== Note
 # This script provides functions to run sector_analytics.R by dopar.
-#===== Run by dopar
 #===== Libraries
 library(tidyverse)
 library(lubridate)
