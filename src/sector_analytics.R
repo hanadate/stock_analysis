@@ -441,6 +441,9 @@ Stap XLP
 Trea TLT x3= RMF
 Zero zero
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
+# Pre: 19:00-22:30/20:00-23:30, EST 06:00-9:30.
+# Market: 22:30-05:00/23:30-06:00, EST 09:30-16:00.
+# After: 05:00-09:00/06:00-10:00, EST 16:00-20:00.
 ", file=result_file, append=TRUE)
 write_lines(paste0("START: ",round(starttime)), file=result_file, append=TRUE)
 write_lines(paste0("END: ",round(endtime)), file=result_file, append=TRUE)
