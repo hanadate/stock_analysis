@@ -12,9 +12,9 @@ library(doParallel)
 library(pROC)
 
 #===== settings
-pred_days <- c(1,3,5)
+pred_days <- c(2,3,4)
 # select prediction date length
-pd <- pred_days[2]
+pd <- pred_days[3]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
@@ -32,7 +32,7 @@ winner_x <- read_csv(paste0("doc/winner_x_", pd,".csv")) %>%
 # number of winning by each sector.
 table(winner_x$max_idx)
 
-# date inverse of average of all sectors won 
+# date that all sectors lose 
 winner_x %>% 
   dplyr::filter(max_idx=="zero") %>% 
   dplyr::pull(actual_date) %>% 

@@ -20,7 +20,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(2,3,4)
+pred_days <- c(1,2,3,4,5)
 sectors <- c(
   # 9 Basic Sectors + TLT
   "XLK", "XLF", "XLE",
@@ -47,7 +47,7 @@ tuneGrid <- expand.grid(nrounds = 100,
                         max_depth = c(4,6,8),
                         eta = .05,
                         gamma = 0,
-                        colsample_bytree = c(.4,.7),
+                        colsample_bytree = .4,
                         min_child_weight = 1,
                         subsample = 1)
 
