@@ -36,7 +36,7 @@ sectors <- c(
 # tolerance takes the simplest model that is within a percent tolerance of the empirically optimal mode
 # Under CV, best model could have small generalization error.
 trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
-                          number = 3, # Try in short time with setting 1.
+                          number = 5, # Try in short time with setting 1.
                           repeats = 2, # Try in short time with setting 1.
                           classProbs = TRUE,
                           summaryFunction = mnLogLoss,
