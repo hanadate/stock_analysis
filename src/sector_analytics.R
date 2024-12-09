@@ -385,7 +385,7 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
                     method = "xgbTree", metric="logLoss", 
                     na.action=na.omit,
                     trControl = trControl, tuneGrid = tuneGrid)
-  stopCluster(cl)
+  # stopCluster(cl)
   saveRDS(modelFit, file=paste0("doc/modelFit_", i,".rds"))
   print(paste0("TRAINING FINISHED at ", now()))
   #=== End of training.
@@ -441,10 +441,10 @@ Ene  XLE x2= ERX
 Heal XLV x3= CURE
 Util XLU
 Stap XLP
-Trea TLT x3= RMF
+Trea TLT x3= TMF
 Zero zero
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
-# Pre: 19:00-22:30/20:00-23:30, EST 06:00-9:30.
+# Pre: 19:00-22:30/20:00-23:30, EST 06:00-09:30.
 # Market: 22:30-05:00/23:30-06:00, EST 09:30-16:00.
 # After: 05:00-09:00/06:00-10:00, EST 16:00-20:00.
 ", file=result_file, append=TRUE)
