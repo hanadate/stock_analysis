@@ -1,36 +1,34 @@
-[1] "2024-12-07 START."
+[1] "2024-12-10 START."
 [1] "Comparing all prices..."
-[1] "Proc time is 3.66625119845072"
+[1] "Proc time is 3.6494929989179"
 [1] "Comparing all RSIs..."
-[1] "Proc time is 2.95215168396632"
-[1] "Start 1 days forecast at 2024-12-07 06:13:13.719276"
-[1] "Start train at 2024-12-07 06:13:30.208281"
+[1] "Proc time is 2.84940495093664"
+[1] "Start 1 days forecast at 2024-12-10 06:12:24.221176"
+[1] "Start train at 2024-12-10 06:12:41.804847"
 Aggregating results
 Selecting tuning parameters
 Fitting nrounds = 100, max_depth = 4, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2024-12-07 07:42:24.883139"
-[1] "Start 2 days forecast at 2024-12-07 07:42:35.051313"
-[1] "Start train at 2024-12-07 07:42:51.749664"
-Aggregating results
-Selecting tuning parameters
-Fitting nrounds = 100, max_depth = 6, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2024-12-07 09:13:42.811474"
-[1] "Start 3 days forecast at 2024-12-07 09:13:56.273661"
-[1] "Start train at 2024-12-07 09:14:13.604465"
+[1] "TRAINING FINISHED at 2024-12-10 09:06:05.359089"
+[1] "Start 2 days forecast at 2024-12-10 09:06:18.043761"
+[1] "Start train at 2024-12-10 09:06:35.863458"
 Aggregating results
 Selecting tuning parameters
 Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2024-12-07 10:46:48.729913"
-[1] "Start 4 days forecast at 2024-12-07 10:46:58.720821"
-[1] "Start train at 2024-12-07 10:47:15.015853"
+[1] "TRAINING FINISHED at 2024-12-10 12:04:02.555764"
+[1] "Start 3 days forecast at 2024-12-10 12:04:16.595677"
+[1] "Start train at 2024-12-10 12:04:34.753753"
 Aggregating results
 Selecting tuning parameters
 Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2024-12-07 12:19:29.565137"
-[1] "Start 5 days forecast at 2024-12-07 12:19:39.535648"
-[1] "Start train at 2024-12-07 12:19:56.264781"
+[1] "TRAINING FINISHED at 2024-12-10 15:01:58.155938"
+[1] "Start 4 days forecast at 2024-12-10 15:02:08.434723"
+[1] "Start train at 2024-12-10 15:02:26.67523"
 Aggregating results
 Selecting tuning parameters
 Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2024-12-07 13:51:57.906916"
-[1] "PREDICT FINISHED."
+[1] "TRAINING FINISHED at 2024-12-10 17:59:30.9462"
+[1] "Start 5 days forecast at 2024-12-10 17:59:46.605566"
+[1] "Start train at 2024-12-10 18:00:04.091565"
+Aggregating results
+Selecting tuning parameters
+Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
