@@ -213,7 +213,8 @@ compared_rsi_df <-
             res <- compare_rsi(ticker_pairs[1,i], ticker_pairs[2,i])
             return(res)
           }
-print(paste0("Proc time is ", now() - t))
+print(paste0("Proc time is ", now() - t)) # 6min
+
 compared_rsi_df <- compared_rsi_df %>% 
   dplyr::arrange(actual_date) %>% 
   # na.locf
@@ -269,7 +270,7 @@ zero_sectors <- lapply(adjusted_prices[c(sectors)], function(x){
     -dailyReturn(x,type="log"), str_replace(paste0(colnames(x), "_return"), ".Close","")
   )
 }) %>% Reduce("+",.)/length(sectors) *0
-names(zero_sectors) <- "zero_return"
+names(zero_sectors) <- "zero_return" 
 
 #===== Iteration for each prediction range
 # Y: The most profitable sector is calculated by comparing with sum of daily return in rs.par days
@@ -442,6 +443,7 @@ Heal XLV x3= CURE
 Util XLU
 Stap XLP
 Trea TLT x3= TMF
+SPSh SH x3=SPXS
 Zero zero
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
 # Pre: 19:00-22:30/20:00-23:30, EST 06:00-09:30.

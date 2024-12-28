@@ -12,6 +12,7 @@ library(caret)
 library(xgboost)
 library(doParallel)
 library(pROC)
+library(rvest)
 
 #===== Setting
 # Set your path
@@ -27,7 +28,7 @@ sectors <- c(
   # 9 Basic Sectors + TLT
   "XLK", "XLF", "XLE",
   "XLB", "XLI", "XLY",
-  "XLV", "XLP", "XLU", "TLT"
+  "XLV", "XLP", "XLU", "TLT","SH"
 )
 # TRAIN Params
 # Note:

@@ -12,14 +12,14 @@ library(doParallel)
 library(pROC)
 
 #===== settings
-pred_days <- c(1,2,3,4,5)
+pred_days <- c(1,2,3)
 # select prediction date length
 pd <- pred_days[3]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",
   "XLB", "XLI", "XLY",
-  "XLV", "XLP", "XLU", "TLT"
+  "XLV", "XLP", "XLU", "TLT","SH"
 )
 #===== read rds and csv for replication
 # list of files under doc folder
