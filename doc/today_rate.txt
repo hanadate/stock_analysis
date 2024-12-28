@@ -1,16 +1,16 @@
-"X1" "X2" "X3" "X4" "X5"
-"PreD" "1" "2" "3" "4" "5"
-"XLK*" "0.14" "0.13" "0.07" "0.15" "0.08"
-"XLF*" "0.05" "0.05" "0.02" "0.03" "0.07"
-"XLE*" "0.11" "0.18" "0.48" "0.29" "0.31"
-"XLB-" "0.09" "0.04" "0.04" "0.07" "0.08"
-"XLI-" "0.04" "0.02" "0.04" "0.06" "0.04"
-"XLY-" "0.23" "0.21" "0.07" "0.07" "0.06"
-"XLV*" "0.05" "0.04" "0.02" "0.04" "0.03"
-"XLP-" "0.06" "0.06" "0.03" "0.03" "0.04"
-"XLU-" "0.11" "0.19" "0.15" "0.18" "0.14"
-"TLT*" "0.08" "0.06" "0.05" "0.07" "0.14"
-"zero" "0.05" "0.02" "0.02" "0.03" "0.03"
+"X1" "X2" "X3"
+"PreD" "1" "2" "3"
+"XLK*" "0.10" "0.12" "0.14"
+"XLF*" "0.03" "0.03" "0.02"
+"XLE*" "0.07" "0.05" "0.18"
+"XLB-" "0.05" "0.04" "0.05"
+"XLI-" "0.05" "0.02" "0.04"
+"XLY-" "0.16" "0.31" "0.24"
+"XLV*" "0.03" "0.02" "0.02"
+"XLP-" "0.07" "0.06" "0.03"
+"XLU-" "0.07" "0.07" "0.13"
+"TLT*" "0.05" "0.04" "0.05"
+"zero" "0.31" "0.25" "0.10"
 
 Tech XLK x3= TECL
 Fin  XLF x3= FAS
@@ -21,21 +21,22 @@ Ene  XLE x2= ERX
 Heal XLV x3= CURE
 Util XLU
 Stap XLP
-Trea TLT x3= RMF
+Trea TLT x3= TMF
+SPSh SH x3=SPXS
 Zero zero
 # Note: Sell fast Leveraged ETFs. It must decay in a long term.
-# Pre: 19:00-22:30/20:00-23:30, EST 06:00-9:30.
+# Pre: 19:00-22:30/20:00-23:30, EST 06:00-09:30.
 # Market: 22:30-05:00/23:30-06:00, EST 09:30-16:00.
 # After: 05:00-09:00/06:00-10:00, EST 16:00-20:00.
 
-START: 2024-12-07 06:05:09
-END: 2024-12-07 13:52:08
+START: 2024-12-28 22:44:38
+END: 2024-12-28 23:17:36
 MIN DATE: 2006-12-01
-MAX DATE: 2024-12-06
-DIM: 4534x4579
+MAX DATE: 2024-12-27
+DIM: 4548x4445
 ===1 days===
-AUC: 0.975701903317068
-Accuracy: 0.703728215309949
+AUC: 0.974624835439627
+Accuracy: 0.707279524961513
 eta : c(0.05, 0.05, 0.05)
 max_depth : c(4, 6, 8)
 gamma : c(0, 0, 0)
@@ -43,8 +44,8 @@ colsample_bytree : c(0.4, 0.4, 0.4)
 min_child_weight : c(1, 1, 1)
 subsample : c(1, 1, 1)
 nrounds : c(100, 100, 100)
-logLoss : c(2.31, 2.32, 2.35)
-logLossSD : c(0.01, 0.01, 0.01)
+logLoss : c(2.4, 2.4, 2.4)
+logLossSD : c(NA, NA, NA)
 nrounds : 100
 max_depth : 4
 eta : 0.05
@@ -53,8 +54,8 @@ colsample_bytree : 0.4
 min_child_weight : 1
 subsample : 1
 ===2 days===
-AUC: 0.999544237403802
-Accuracy: 0.95233892321271
+AUC: 0.980200420701237
+Accuracy: 0.745270567531896
 eta : c(0.05, 0.05, 0.05)
 max_depth : c(4, 6, 8)
 gamma : c(0, 0, 0)
@@ -62,18 +63,18 @@ colsample_bytree : c(0.4, 0.4, 0.4)
 min_child_weight : c(1, 1, 1)
 subsample : c(1, 1, 1)
 nrounds : c(100, 100, 100)
-logLoss : c(2.2, 2.15, 2.13)
-logLossSD : c(0.01, 0.01, 0.02)
+logLoss : c(2.4, 2.4, 2.4)
+logLossSD : c(NA, NA, NA)
 nrounds : 100
-max_depth : 6
+max_depth : 4
 eta : 0.05
 gamma : 0
 colsample_bytree : 0.4
 min_child_weight : 1
 subsample : 1
 ===3 days===
-AUC: 0.999999343907412
-Accuracy: 0.997792981681748
+AUC: 0.986321599215492
+Accuracy: 0.794499449944995
 eta : c(0.05, 0.05, 0.05)
 max_depth : c(4, 6, 8)
 gamma : c(0, 0, 0)
@@ -81,48 +82,10 @@ colsample_bytree : c(0.4, 0.4, 0.4)
 min_child_weight : c(1, 1, 1)
 subsample : c(1, 1, 1)
 nrounds : c(100, 100, 100)
-logLoss : c(2.07, 1.95, 1.9)
-logLossSD : c(0.01, 0.01, 0.01)
+logLoss : c(2.4, 2.4, 2.4)
+logLossSD : c(NA, NA, NA)
 nrounds : 100
-max_depth : 8
-eta : 0.05
-gamma : 0
-colsample_bytree : 0.4
-min_child_weight : 1
-subsample : 1
-===4 days===
-AUC: 0.999998990908746
-Accuracy: 0.998675496688742
-eta : c(0.05, 0.05, 0.05)
-max_depth : c(4, 6, 8)
-gamma : c(0, 0, 0)
-colsample_bytree : c(0.4, 0.4, 0.4)
-min_child_weight : c(1, 1, 1)
-subsample : c(1, 1, 1)
-nrounds : c(100, 100, 100)
-logLoss : c(1.96, 1.82, 1.77)
-logLossSD : c(0.01, 0.02, 0.01)
-nrounds : 100
-max_depth : 8
-eta : 0.05
-gamma : 0
-colsample_bytree : 0.4
-min_child_weight : 1
-subsample : 1
-===5 days===
-AUC: 0.999999677489251
-Accuracy: 0.998675204239346
-eta : c(0.05, 0.05, 0.05)
-max_depth : c(4, 6, 8)
-gamma : c(0, 0, 0)
-colsample_bytree : c(0.4, 0.4, 0.4)
-min_child_weight : c(1, 1, 1)
-subsample : c(1, 1, 1)
-nrounds : c(100, 100, 100)
-logLoss : c(1.86, 1.69, 1.63)
-logLossSD : c(0.01, 0.02, 0.02)
-nrounds : 100
-max_depth : 8
+max_depth : 4
 eta : 0.05
 gamma : 0
 colsample_bytree : 0.4
@@ -130,8 +93,8 @@ min_child_weight : 1
 subsample : 1
 ===trainControl===
 method : repeatedcv
-number : 3
-repeats : 2
+number : 1
+repeats : 1
 search : random
 p : 0.75
 initialWindow : NULL
