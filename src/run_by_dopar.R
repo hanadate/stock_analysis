@@ -20,7 +20,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(1,2,3)
+pred_days <- c(2)
 sectors <- c(
   # 9 Basic Sectors + TLT
   "XLK", "XLF", "XLE",
@@ -36,7 +36,7 @@ sectors <- c(
 # tolerance takes the simplest model that is within a percent tolerance of the empirically optimal mode
 # Under CV, best model could have small generalization error.
 trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
-                          number = 5, # Try in short time with setting 1.
+                          number = 10, # Try in short time with setting 1.
                           repeats = 2, # Try in short time with setting 1.
                           classProbs = TRUE,
                           summaryFunction = mnLogLoss,
@@ -44,7 +44,7 @@ trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for lar
                           verboseIter=TRUE,
                           selectionFunction="tolerance")
 tuneGrid <- expand.grid(nrounds = 100,
-                        max_depth = c(4,6,8),
+                        max_depth = c(6,8),
                         eta = .05,
                         gamma = 0,
                         colsample_bytree = .4,
