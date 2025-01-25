@@ -1,3 +1,4 @@
+print("Start pred price.")
 #===== Target: the most profitable sector in future 2 days
 rate2 <- read.table("doc/today_rate_dump2.txt") %>% 
   select(-predict_date)
@@ -126,3 +127,5 @@ pred_hi_2_price <- data.frame(hi=tail(target_hi,cutsize), pred_hi_logreturn=tail
 # write results
 write_lines(paste0("BUY ", target, " at ", pred_lo_1_price), file=result_file, append=TRUE)
 write_lines(paste0("SELL ", target, " at ", pred_hi_2_price), file=result_file, append=TRUE)
+write_lines(lubridate::now() , file=result_file, append=TRUE)
+print("End pred price.")
