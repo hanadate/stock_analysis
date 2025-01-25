@@ -1,16 +1,16 @@
-"X1"
-"PreD" "2"
-"XLK*" "0.20"
-"XLF*" "0.06"
-"XLE*" "0.24"
-"XLB-" "0.05"
-"XLI-" "0.06"
-"XLY-" "0.11"
-"XLV*" "0.03"
-"XLP-" "0.04"
-"XLU-" "0.13"
-"TLT*" "0.05"
-"zero" "0.03"
+"X1" "X2"
+"PreD" "1" "2"
+"XLK*" "0.27" "0.31"
+"XLF*" "0.05" "0.04"
+"XLE*" "0.09" "0.07"
+"XLB-" "0.06" "0.05"
+"XLI-" "0.07" "0.04"
+"XLY-" "0.08" "0.12"
+"XLV*" "0.07" "0.15"
+"XLP-" "0.03" "0.03"
+"XLU-" "0.22" "0.12"
+"TLT*" "0.05" "0.05"
+"zero" "0.02" "0.03"
 
 Tech XLK x3= TECL
 Fin  XLF x3= FAS
@@ -29,14 +29,14 @@ Zero zero
 # Market: 22:30-05:00/23:30-06:00, EST 09:30-16:00.
 # After: 05:00-09:00/06:00-10:00, EST 16:00-20:00.
 
-START: 2025-01-23 06:05:18
-END: 2025-01-23 11:17:43
+START: 2025-01-25 23:21:54
+END: 2025-01-25 23:50:03
 MIN DATE: 2006-12-01
-MAX DATE: 2025-01-22
-DIM: 4563x4579
-===2 days===
-AUC: 0.999998462840412
-Accuracy: 0.996711247533436
+MAX DATE: 2025-01-24
+DIM: 4565x4579
+===1 days===
+AUC: 0.999397794155662
+Accuracy: 0.945661700262927
 eta : c(0.05, 0.05)
 max_depth : c(6, 8)
 gamma : c(0, 0)
@@ -44,10 +44,29 @@ colsample_bytree : c(0.4, 0.4)
 min_child_weight : c(1, 1)
 subsample : c(1, 1)
 nrounds : c(100, 100)
-logLoss : c(2.1, 2.06)
-logLossSD : c(0.03, 0.03)
+logLoss : c(2.4, 2.4)
+logLossSD : c(NA, NA)
 nrounds : 100
-max_depth : 8
+max_depth : 6
+eta : 0.05
+gamma : 0
+colsample_bytree : 0.4
+min_child_weight : 1
+subsample : 1
+===2 days===
+AUC: 0.999493060038045
+Accuracy: 0.95069033530572
+eta : c(0.05, 0.05)
+max_depth : c(6, 8)
+gamma : c(0, 0)
+colsample_bytree : c(0.4, 0.4)
+min_child_weight : c(1, 1)
+subsample : c(1, 1)
+nrounds : c(100, 100)
+logLoss : c(2.4, 2.4)
+logLossSD : c(NA, NA)
+nrounds : 100
+max_depth : 6
 eta : 0.05
 gamma : 0
 colsample_bytree : 0.4
@@ -55,8 +74,8 @@ min_child_weight : 1
 subsample : 1
 ===trainControl===
 method : repeatedcv
-number : 10
-repeats : 2
+number : 1
+repeats : 1
 search : random
 p : 0.75
 initialWindow : NULL

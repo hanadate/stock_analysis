@@ -12,9 +12,9 @@ library(doParallel)
 library(pROC)
 
 #===== settings
-pred_days <- c(1,2,3)
+pred_days <- c(1,2)
 # select prediction date length
-pd <- pred_days[3]
+pd <- pred_days[2]
 sectors <- c(
   # 9 Basic Sectors
   "XLK", "XLF", "XLE",

@@ -20,7 +20,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(2)
+pred_days <- c(1,2)
 sectors <- c(
   # 9 Basic Sectors + TLT
   "XLK", "XLF", "XLE",
@@ -55,5 +55,6 @@ tuneGrid <- expand.grid(nrounds = 100,
 cl <- makePSOCKcluster(detectCores())
 registerDoParallel(cl)
 source("src/sector_analytics.R")
+source("src/price_buy_sell.R")
 stopCluster(cl)
 

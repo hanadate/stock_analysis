@@ -1,12 +1,18 @@
-[1] "2025-01-23 START."
+[1] "2025-01-25 START."
 [1] "Comparing all prices..."
-[1] "Proc time is 3.67514391740163"
+[1] "Proc time is 3.67162661552429"
 [1] "Comparing all RSIs..."
-[1] "Proc time is 2.96245031754176"
-[1] "Start 2 days forecast at 2025-01-23 06:12:45.205284"
-[1] "Start train at 2025-01-23 06:13:12.646045"
+[1] "Proc time is 2.93157594998678"
+[1] "Start 1 days forecast at 2025-01-25 06:12:47.607258"
+[1] "Start train at 2025-01-25 06:13:48.061556"
+Aggregating results
+Selecting tuning parameters
+Fitting nrounds = 100, max_depth = 6, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
+[1] "TRAINING FINISHED at 2025-01-25 11:20:09.556149"
+[1] "Start 2 days forecast at 2025-01-25 11:20:41.863322"
+[1] "Start train at 2025-01-25 11:23:00.326631"
 Aggregating results
 Selecting tuning parameters
 Fitting nrounds = 100, max_depth = 8, eta = 0.05, gamma = 0, colsample_bytree = 0.4, min_child_weight = 1, subsample = 1 on full training set
-[1] "TRAINING FINISHED at 2025-01-23 11:17:29.216173"
+[1] "TRAINING FINISHED at 2025-01-25 16:33:08.144357"
 [1] "PREDICT FINISHED."
