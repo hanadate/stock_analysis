@@ -61,10 +61,16 @@ pred_lo_1 <- lo_x_1 %>%
   predict(modelFit_lo_1, .)
 write.csv(pred_lo_1, file=paste0("doc/pred_lo_1.csv"))
 cutsize <- 200
-pred_lo_1_price <- data.frame(lo=tail(target_lo,cutsize), pred_lo_logreturn=tail(pred_lo_1,cutsize)) %>% 
+pred_lo_1_price_return <- data.frame(lo=tail(target_lo,cutsize), pred_lo_logreturn=tail(pred_lo_1,cutsize)) %>% 
   mutate(pred_lo_return=exp(pred_lo_logreturn),
          pred_lo_price=target*pred_lo_return) %>% 
   .$pred_lo_price %>% 
+  tail(.,1)
+pred_lo_1_price <- pred_lo_1_price_return %>% 
+  .$pred_lo_price %>% 
+  tail(.,1)
+pred_lo_1_return <- pred_lo_1_price_return %>% 
+  .$pred_lo_return %>% 
   tail(.,1)
 
 
@@ -117,15 +123,18 @@ pred_hi_2 <- hi_x_2 %>%
   predict(modelFit_hi_2, .)
 write.csv(pred_hi_2, file=paste0("doc/pred_hi_2.csv"))
 cutsize <- 200
-pred_hi_2_price <- data.frame(hi=tail(target_hi,cutsize), pred_hi_logreturn=tail(pred_hi_2,cutsize)) %>% 
+pred_hi_2_price_return <- data.frame(hi=tail(target_hi,cutsize), pred_hi_logreturn=tail(pred_hi_2,cutsize)) %>% 
   mutate(pred_hi_return=exp(pred_hi_logreturn),
          pred_hi_price=target*pred_hi_return) %>% 
+pred_hi_2_price <- pred_hi_2_price_return %>% 
   .$pred_hi_price %>% 
   tail(.,1)
-
+pred_hi_2_return <- pred_hi_2_price_return %>% 
+  .$pred_hi_return %>% 
+  tail(.,1)
 
 # write results
-write_lines(paste0("BUY ", target, " at ", pred_lo_1_price), file=result_file, append=TRUE)
-write_lines(paste0("SELL ", target, " at ", pred_hi_2_price), file=result_file, append=TRUE)
+write_lines(paste0("BUY ", target, " at ", pred_lo_1_price, "(", pred_lo_1_return ,")"), file=result_file, append=TRUE)
+write_lines(paste0("SELL ", target, " at ", pred_hi_2_price, "(", pred_hi_2_return, ")"), file=result_file, append=TRUE)
 write_lines(lubridate::now() , file=result_file, append=TRUE)
 print("End pred price.")
