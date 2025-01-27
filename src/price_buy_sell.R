@@ -3,6 +3,7 @@ print("Start pred price.")
 rate2 <- read.table("doc/today_rate_dump2.txt") %>% 
   select(-predict_date)
 target <- colnames(rate2)[apply(rate2, 1, which.max)]
+prices_ohlc <- readRDS("doc/sectors_prices.rds")
 target_ohlc <- prices_ohlc[[target]] %>% 
   adjustOHLC(., use.Adjusted=TRUE)
 
@@ -45,13 +46,19 @@ trControl2 <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for la
                           search = "random",
                           verboseIter=TRUE,
                           selectionFunction="tolerance")
+tuneGrid <- expand.grid(nrounds = 100,
+                        max_depth = c(6,8),
+                        eta = .05,
+                        gamma = 0,
+                        colsample_bytree = .4,
+                        min_child_weight = 1,
+                        subsample = 1)
 modelFit_lo_1 <- train(lo_1 ~ . -actual_date, data = lo_x_1,
                   method = "xgbTree", metric="RMSE", 
                   na.action=na.omit,
                   trControl = trControl2, tuneGrid = tuneGrid)
-# stopCluster(cl)
 saveRDS(modelFit_lo_1, file=paste0("doc/modelFit_lo_1.rds"))
-print(paste0("TRAINING FINISHED at ", now()))
+print(paste0("TRAINING FOR BUY FINISHED at ", now()))
 #=== End of training.
 modelFit_lo_1 <- readRDS(paste0("doc/modelFit_lo_1.rds"))
 
@@ -63,9 +70,7 @@ write.csv(pred_lo_1, file=paste0("doc/pred_lo_1.csv"))
 cutsize <- 200
 pred_lo_1_price_return <- data.frame(lo=tail(target_lo,cutsize), pred_lo_logreturn=tail(pred_lo_1,cutsize)) %>% 
   mutate(pred_lo_return=exp(pred_lo_logreturn),
-         pred_lo_price=target*pred_lo_return) %>% 
-  .$pred_lo_price %>% 
-  tail(.,1)
+         pred_lo_price=target*pred_lo_return)
 pred_lo_1_price <- pred_lo_1_price_return %>% 
   .$pred_lo_price %>% 
   tail(.,1)
@@ -111,9 +116,9 @@ modelFit_hi_2 <- train(hi_2 ~ . -actual_date, data = hi_x_2,
                        method = "xgbTree", metric="RMSE", 
                        na.action=na.omit,
                        trControl = trControl2, tuneGrid = tuneGrid)
-# stopCluster(cl)
+stopCluster(cl)
 saveRDS(modelFit_hi_2, file=paste0("doc/modelFit_hi_2.rds"))
-print(paste0("TRAINING FINISHED at ", now()))
+print(paste0("TRAINING FOR SELL FINISHED at ", now()))
 #=== End of training.
 modelFit_hi_2 <- readRDS(paste0("doc/modelFit_hi_2.rds"))
 
@@ -125,7 +130,7 @@ write.csv(pred_hi_2, file=paste0("doc/pred_hi_2.csv"))
 cutsize <- 200
 pred_hi_2_price_return <- data.frame(hi=tail(target_hi,cutsize), pred_hi_logreturn=tail(pred_hi_2,cutsize)) %>% 
   mutate(pred_hi_return=exp(pred_hi_logreturn),
-         pred_hi_price=target*pred_hi_return) %>% 
+         pred_hi_price=target*pred_hi_return)
 pred_hi_2_price <- pred_hi_2_price_return %>% 
   .$pred_hi_price %>% 
   tail(.,1)
@@ -134,6 +139,7 @@ pred_hi_2_return <- pred_hi_2_price_return %>%
   tail(.,1)
 
 # write results
+write_lines("===BUY/SELL PRICE===", file=result_file, append=TRUE)
 write_lines(paste0("BUY ", target, " at ", pred_lo_1_price, "(", pred_lo_1_return ,")"), file=result_file, append=TRUE)
 write_lines(paste0("SELL ", target, " at ", pred_hi_2_price, "(", pred_hi_2_return, ")"), file=result_file, append=TRUE)
 write_lines(lubridate::now() , file=result_file, append=TRUE)
