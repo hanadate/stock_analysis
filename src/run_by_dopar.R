@@ -52,9 +52,10 @@ tuneGrid <- expand.grid(nrounds = 100,
                         subsample = 1)
 
 #===== Run sector_analytics
-cl <- makePSOCKcluster(detectCores())
+cl <- makePSOCKcluster(detectCores(logical=FALSE))
 registerDoParallel(cl)
 source("src/sector_analytics.R")
 source("src/price_buy_sell.R")
+source("src/stats_return.R")
 stopCluster(cl)
 

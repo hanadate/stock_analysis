@@ -129,7 +129,7 @@ m2_df <- fredr(
 #===== Tidy up data
 # Adjust prices to extract Close price 
 adjusted_prices <- lapply(prices_ohlc, function(x){(Cl(adjustOHLC(x,use.Adjusted=TRUE)))})
-
+rm(prices_ohlc)
 # Check Missing Rate for each ticker
 missing_rate <- lapply(adjusted_prices, function(x){mean(is.na(x))}) %>% 
   do.call(c,.) %>% 
@@ -152,7 +152,7 @@ adjusted_prices <- adjusted_prices[ok_tickers]
 # Trim older date than the inception date of XHB.
 adjusted_prices <- adjusted_prices %>% 
   map(\(x) x[index(x)>=each_min_date["XHB"]])
-
+saveRDS(adjusted_prices, "doc/adjusted_prices.rds")
 # Check the latest date for each ticker.
 each_max_date <- lapply(adjusted_prices, function(x){max(index(x))}) %>% 
   do.call(c, .) %>% 
@@ -281,6 +281,8 @@ return_prices <- lapply(adjusted_prices[c(sectors)], function(x){
   )
 }) %>% 
   rlist::list.append(., zero_sectors)
+rm(adjusted_prices)
+
 today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   print(paste0("Start ",i," days forecast at ",lubridate::now()))
   rs.par <- i
@@ -289,6 +291,7 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
     colnames(tmp.x)<-str_replace(paste0(colnames(x), "_return_rs"), "_return","")
     return(tmp.x)
   })
+  saveRDS(return_rs_prices, paste0("doc/return_rs_prices_",i,".rds"))
   # as.data.frame
   mergeddf <- as.data.frame(do.call(cbind, return_rs_prices))
   
@@ -354,6 +357,10 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
     # Delete Saturday & Sunday.
     # Sort by actual_date
     dplyr::arrange(actual_date)
+    rm(rsi14_merged_prices, sma_cross_merged_prices, 
+    vix_value_df, treasuries, compared_rsi_df,
+    compared_price_df, unrate_df, mortgage_df, m2_df)
+    gc();gc()
   # This dataset includes NAs in object variable.
   # Thus, pass the parameter na.action=na.omit
   # check train data 
@@ -378,8 +385,8 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   
   # Train
   print(paste0("Start train at ", now()))
-  cl <- makePSOCKcluster(detectCores())
-  registerDoParallel(cl)
+  # cl <- makePSOCKcluster(detectCores())
+  # registerDoParallel(cl)
   set.seed(1111)
   modelFit <- train(max_idx ~ . -actual_date, data = winner_x,
                     weights = class_weight,

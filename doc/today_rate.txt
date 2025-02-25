@@ -1,16 +1,16 @@
 "X1" "X2"
 "PreD" "1" "2"
-"XLK*" "0.20" "0.30"
-"XLF*" "0.05" "0.04"
-"XLE*" "0.07" "0.12"
-"XLB-" "0.08" "0.06"
-"XLI-" "0.07" "0.05"
-"XLY-" "0.08" "0.09"
-"XLV*" "0.09" "0.12"
-"XLP-" "0.03" "0.03"
-"XLU-" "0.26" "0.11"
-"TLT*" "0.04" "0.06"
-"zero" "0.03" "0.02"
+"XLK*" "0.04" "0.14"
+"XLF*" "0.04" "0.05"
+"XLE*" "0.12" "0.18"
+"XLB-" "0.04" "0.04"
+"XLI-" "0.02" "0.03"
+"XLY-" "0.04" "0.16"
+"XLV*" "0.46" "0.06"
+"XLP-" "0.04" "0.09"
+"XLU-" "0.05" "0.06"
+"TLT*" "0.10" "0.17"
+"zero" "0.03" "0.03"
 
 Tech XLK x3= TECL
 Fin  XLF x3= FAS
@@ -29,14 +29,14 @@ Zero zero
 # Market: 22:30-05:00/23:30-06:00, EST 09:30-16:00.
 # After: 05:00-09:00/06:00-10:00, EST 16:00-20:00.
 
-START: 2025-01-26 01:36:18
-END: 2025-01-26 12:08:25
+START: 2025-02-25 20:19:10
+END: 2025-02-25 20:40:01
 MIN DATE: 2006-12-01
-MAX DATE: 2025-01-24
-DIM: 4565x4579
+MAX DATE: 2025-02-24
+DIM: 4585x4445
 ===1 days===
-AUC: 0.999340891328991
-Accuracy: 0.942156003505697
+AUC: 0.999303526671989
+Accuracy: 0.945462478184991
 eta : c(0.05, 0.05)
 max_depth : c(6, 8)
 gamma : c(0, 0)
@@ -44,8 +44,8 @@ colsample_bytree : c(0.4, 0.4)
 min_child_weight : c(1, 1)
 subsample : c(1, 1)
 nrounds : c(100, 100)
-logLoss : c(2.3, 2.32)
-logLossSD : c(0.02, 0.02)
+logLoss : c(2.35, 2.39)
+logLossSD : c(0.01, 0.01)
 nrounds : 100
 max_depth : 6
 eta : 0.05
@@ -54,8 +54,8 @@ colsample_bytree : 0.4
 min_child_weight : 1
 subsample : 1
 ===2 days===
-AUC: 0.999998642354181
-Accuracy: 0.996931843085689
+AUC: 0.999507260329557
+Accuracy: 0.954178485708052
 eta : c(0.05, 0.05)
 max_depth : c(6, 8)
 gamma : c(0, 0)
@@ -63,10 +63,10 @@ colsample_bytree : c(0.4, 0.4)
 min_child_weight : c(1, 1)
 subsample : c(1, 1)
 nrounds : c(100, 100)
-logLoss : c(2.1, 2.06)
-logLossSD : c(0.03, 0.04)
+logLoss : c(2.19, 2.19)
+logLossSD : c(0.01, 0)
 nrounds : 100
-max_depth : 8
+max_depth : 6
 eta : 0.05
 gamma : 0
 colsample_bytree : 0.4
@@ -74,7 +74,7 @@ min_child_weight : 1
 subsample : 1
 ===trainControl===
 method : repeatedcv
-number : 10
+number : 2
 repeats : 2
 search : random
 p : 0.75
@@ -120,3 +120,16 @@ gamma : c(0, 0)
 colsample_bytree : c(0.4, 0.4)
 min_child_weight : c(1, 1)
 subsample : c(1, 1)
+===Quantile of winner's return===
+"sector" "Q1" "Q2" "Q3"
+"TLT" "1.008" "1.013" "1.018"
+"XLB" "1.013" "1.019" "1.027"
+"XLE" "1.014" "1.023" "1.034"
+"XLF" "1.013" "1.021" "1.036"
+"XLI" "1.011" "1.017" "1.027"
+"XLK" "1.011" "1.018" "1.026"
+"XLP" "1.007" "1.01" "1.015"
+"XLU" "1.01" "1.015" "1.021"
+"XLV" "1.009" "1.014" "1.019"
+"XLY" "1.011" "1.017" "1.027"
+"zero" "1" "1" "1"

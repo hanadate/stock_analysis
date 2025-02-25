@@ -6,7 +6,8 @@ target <- colnames(rate2)[apply(rate2, 1, which.max)]
 prices_ohlc <- readRDS("doc/sectors_prices.rds")
 target_ohlc <- prices_ohlc[[target]] %>% 
   adjustOHLC(., use.Adjusted=TRUE)
-
+rm(prices_ohlc)
+gc();gc()
 #===== Buy: low price of target in future 1 day
 target_lo <- Lo(target_ohlc)
 names(target_lo) <- "target"
@@ -41,7 +42,7 @@ registerDoParallel(cl)
 set.seed(1111)
 trControl2 <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
                           number = 10, # Try in short time with setting 1.
-                          repeats = 2, # Try in short time with setting 1.
+                          repeats = 3, # Try in short time with setting 1.
                           summaryFunction = defaultSummary,
                           search = "random",
                           verboseIter=TRUE,
