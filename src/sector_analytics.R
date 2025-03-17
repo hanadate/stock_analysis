@@ -357,10 +357,6 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
     # Delete Saturday & Sunday.
     # Sort by actual_date
     dplyr::arrange(actual_date)
-    rm(rsi14_merged_prices, sma_cross_merged_prices, 
-    vix_value_df, treasuries, compared_rsi_df,
-    compared_price_df, unrate_df, mortgage_df, m2_df)
-    gc();gc()
   # This dataset includes NAs in object variable.
   # Thus, pass the parameter na.action=na.omit
   # check train data 
@@ -425,6 +421,10 @@ today_rate_combined <- foreach(i=pred_days, .combine="rbind") %do% {
   write.table(today_rate, paste0("doc/today_rate_dump", i,".txt"))
   return(today_rate)
 }
+rm(rsi14_merged_prices, sma_cross_merged_prices, 
+   vix_value_df, treasuries, compared_rsi_df,
+   compared_price_df, unrate_df, mortgage_df, m2_df)
+gc();gc()
 saveRDS(today_rate_combined,"doc/today_rate_combined.rds")
 endtime <- now()
 

@@ -20,7 +20,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(1,2)
+pred_days <- c(2)
 sectors <- c(
   # 9 Basic Sectors + TLT
   "XLK", "XLF", "XLE",
@@ -35,27 +35,30 @@ sectors <- c(
 # Set nrounds as many as possible.
 # tolerance takes the simplest model that is within a percent tolerance of the empirically optimal mode
 # Under CV, best model could have small generalization error.
+# raytrek
 trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for large dataset.
-                          number = 10, # Try in short time with setting 1.
-                          repeats = 2, # Try in short time with setting 1.
+                          number = 5, # 5
+                          repeats = 5, # 5
                           classProbs = TRUE,
                           summaryFunction = mnLogLoss,
                           search = "random",
                           verboseIter=TRUE,
                           selectionFunction="tolerance")
-tuneGrid <- expand.grid(nrounds = 100,
-                        max_depth = c(6,8),
-                        eta = .05,
-                        gamma = 0,
-                        colsample_bytree = .4,
-                        min_child_weight = 1,
-                        subsample = 1)
+tuneGrid <- expand.grid(nrounds = 200,
+                        max_depth = c(3,5), #3~8
+                        eta = .1, 
+                        gamma = c(.1,.5), # higher is useful for overfit  
+                        colsample_bytree = .6, #.5~.8
+                        min_child_weight = c(1,3), # higher is useful for overfit
+                        subsample = 1) #.5~.8
 
 #===== Run sector_analytics
-cl <- makePSOCKcluster(detectCores(logical=FALSE))
+cores.tmp <- 16 #16
+cores <- ifelse(detectCores(logical=TRUE)<cores.tmp, detectCores(logical=TRUE), cores.tmp)
+cl <- makePSOCKcluster(cores)
 registerDoParallel(cl)
 source("src/sector_analytics.R")
-source("src/price_buy_sell.R")
+# source("src/price_buy_sell.R")
 source("src/stats_return.R")
 stopCluster(cl)
 
