@@ -20,7 +20,7 @@ result_file <- "doc/today_rate.txt"
 setwd(workdir)
 print(paste0(today()," START."))
 fromdate <- "2000-01-01"
-pred_days <- c(2)
+pred_days <- c(2,3)
 sectors <- c(
   # 9 Basic Sectors + TLT
   "XLK", "XLF", "XLE",
@@ -47,9 +47,9 @@ trControl <- trainControl(method = "repeatedcv", # method="LOOCV" is bad for lar
 tuneGrid <- expand.grid(nrounds = 200,
                         max_depth = c(3,5), #3~8
                         eta = .1, 
-                        gamma = c(.1,.5), # higher is useful for overfit  
-                        colsample_bytree = .6, #.5~.8
-                        min_child_weight = c(1,3), # higher is useful for overfit
+                        gamma = .1, # higher is useful for overfit  .1~.4
+                        colsample_bytree = .7, #.5~.8
+                        min_child_weight = c(2,4), # higher is useful for overfit 2,4,8,16,32
                         subsample = 1) #.5~.8
 
 #===== Run sector_analytics
